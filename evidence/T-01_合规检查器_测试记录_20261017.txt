@@ -1,0 +1,22 @@
+test_good_report_passes (test_compliance.TestCheckReport.test_good_report_passes) ... ok
+test_missing_required_phrases_fail (test_compliance.TestCheckReport.test_missing_required_phrases_fail) ... ok
+test_spike2_original_disclaimer_fails_on_words (test_compliance.TestCheckReport.test_spike2_original_disclaimer_fails_on_words) ... ok
+test_summary_contains_details (test_compliance.TestCheckReport.test_summary_contains_details) ... ok
+test_config_loadable_and_external (test_compliance.TestExternalConfig.test_config_loadable_and_external) ... ok
+test_custom_path_injection (test_compliance.TestExternalConfig.test_custom_path_injection)
+外置配置可替换：写临时 JSON → 注入加载 → 新禁词生效（零代码改动）。 ... ok
+test_empty_wordlist_rejected (test_compliance.TestExternalConfig.test_empty_wordlist_rejected) ... ok
+test_fail_text_raises_with_source (test_compliance.TestHardGate.test_fail_text_raises_with_source) ... ok
+test_pass_text_no_raise (test_compliance.TestHardGate.test_pass_text_no_raise) ... ok
+test_each_forbidden_word_hits (test_compliance.TestScan.test_each_forbidden_word_hits) ... ok
+test_empty_and_none_input (test_compliance.TestScan.test_empty_and_none_input) ... ok
+test_good_text_passes (test_compliance.TestScan.test_good_text_passes) ... ok
+test_injected_wordlist (test_compliance.TestScan.test_injected_wordlist) ... ok
+test_pure_function_no_side_effects (test_compliance.TestScan.test_pure_function_no_side_effects) ... ok
+test_spike2_original_disclaimer_fails (test_compliance.TestScan.test_spike2_original_disclaimer_fails)
+Spike-2 实战案例：免责声明含"买入、卖出"必须判 FAIL（DoD-1）。 ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 0.007s
+
+OK

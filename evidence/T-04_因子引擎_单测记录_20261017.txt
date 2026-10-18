@@ -1,0 +1,270 @@
+test_boundaries (test_factor_engine.TestBand.test_boundaries) ... ok
+test_colors_cn_market_convention (test_factor_engine.TestBand.test_colors_cn_market_convention)
+涨红跌绿：偏有利=红 #C00000，偏不利=绿 #1E7B3C，中性=深灰。 ... ok
+test_high_good_direction_kept (test_factor_engine.TestPoolScores.test_high_good_direction_kept)
+高值有利因子（F4 动量）高值 → 高分（C=100, A=33.3）。 ... ok
+test_low_good_direction_reversed (test_factor_engine.TestPoolScores.test_low_good_direction_reversed)
+DoD-1 方向统一：低值有利因子（F1 PE）低 PE → 高分。 ... ok
+test_missing_not_weighted (test_factor_engine.TestPoolScores.test_missing_not_weighted)
+DoD-1 缺失不填分不计权：A 的 F18 缺失 → S_raw = 其余 17 项均值。 ... ok
+test_tied_ranks_averaged (test_factor_engine.TestPoolScores.test_tied_ranks_averaged)
+DoD-1 平均并列名次：B、C 并列 → 名次 (2+3)/2=2.5 → pct 83.3 → 反转 16.7。 ... ok
+test_two_level_ranking_handcheck (test_factor_engine.TestPoolScores.test_two_level_ranking_handcheck)
+DoD-2 两级排名手算比对（A 全因子最优 / B 居中 / C 全最差）。 ... ok
+test_known_values_up_trend (test_factor_engine.TestRawFactors.test_known_values_up_trend) ... C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+ok
+test_short_data_nan_protection (test_factor_engine.TestRawFactors.test_short_data_nan_protection) ... C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+ok
+test_side_means_structure (test_factor_engine.TestSideMeans.test_side_means_structure) ... ok
+test_H_range_and_monotonic (test_factor_engine.TestWeeklyH.test_H_range_and_monotonic) ... C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+C:\Users\28309\.workbuddy\binaries\python\envs\default\Lib\site-packages\numpy\lib\_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 1.019s
+
+OK

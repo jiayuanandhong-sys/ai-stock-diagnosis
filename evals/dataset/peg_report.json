@@ -1,0 +1,794 @@
+{
+ "checker_version": "1.1.0",
+ "generated_at": "2026-10-18T05:15:55.486859+00:00",
+ "case_files": [
+  "C:\\Users\\28309\\WorkBuddy\\2026-10-17-22-42-42\\evals\\dataset\\cases_dev.jsonl",
+  "C:\\Users\\28309\\WorkBuddy\\2026-10-17-22-42-42\\evals\\dataset\\cases_regression.jsonl",
+  "C:\\Users\\28309\\WorkBuddy\\2026-10-17-22-42-42\\evals\\dataset\\cases_holdout.jsonl"
+ ],
+ "spec_id_count": 49,
+ "gates": {
+  "PEG-5": {
+   "status": "PASS"
+  }
+ },
+ "cases": {
+  "L2-006": {
+   "PEG-1": {
+    "status": "PASS"
+   },
+   "PEG-2": {
+    "status": "PASS"
+   },
+   "PEG-4": {
+    "status": "PASS"
+   },
+   "PEG-6": {
+    "status": "PASS"
+   },
+   "PEG-3": {
+    "status": "PASS",
+    "checks": 18
+   }
+  },
+  "L2-007": {
+   "PEG-1": {
+    "status": "PASS"
+   },
+   "PEG-2": {
+    "status": "PASS"
+   },
+   "PEG-4": {
+    "status": "PASS"
+   },
+   "PEG-6": {
+    "status": "PASS"
+   },
+   "PEG-3": {
+    "status": "PASS",
+    "checks": 2
+   }
+  },
+  "L2-008": {
+   "PEG-1": {
+    "status": "PASS"
+   },
+   "PEG-2": {
+    "status": "PASS"
+   },
+   "PEG-4": {
+    "status": "PASS"
+   },
+   "PEG-6": {
+    "status": "PASS"
+   },
+   "PEG-3": {
+    "status": "PASS",
+    "checks": 1
+   }
+  },
+  "L3-009": {
+   "PEG-1": {
+    "status": "PASS"
+   },
+   "PEG-2": {
+    "status": "PASS"
+   },
+   "PEG-4": {
+    "status": "PASS"
+   },
+   "PEG-6": {
+    "status": "PASS"
+   },
+   "PEG-3": {
+    "status": "PASS",
+    "checks": 4
+   }
+  },
+  "L3-010": {
+   "PEG-1": {
+    "status": "PASS"
+   },
+   "PEG-2": {
+    "status": "PASS"
+   },
+   "PEG-4": {
+    "status": "PASS"
+   },
+   "PEG-6": {
+    "status": "PASS"
+   },
+   "PEG-3": {
+    "status": "PASS",
+    "checks": 3
+   }
+  },
+  "L3-011": {
+   "PEG-1": {
+    "status": "PASS"
+   },
+   "PEG-2": {
+    "status": "PASS"
+   },
+   "PEG-4": {
+    "status": "PASS"
+   },
+   "PEG-6": {
+    "status": "PASS"
+   },
+   "PEG-3": {
+    "status": "PASS",
+    "checks": 2
+   }
+  },
+  "L3-012": {
+   "PEG-1": {
+    "status": "PASS"
+   },
+   "PEG-2": {
+    "status": "PASS"
+   },
+   "PEG-4": {
+    "status": "PASS"
+   },
+   "PEG-6": {
+    "status": "PASS"
+   },
+   "PEG-3": {
+    "status": "PASS",
+    "checks": 7
+   }
+  },
+  "L3-013": {
+   "PEG-1": {
+    "status": "PASS"
+   },
+   "PEG-2": {
+    "status": "PASS"
+   },
+   "PEG-4": {
+    "status": "PASS"
+   },
+   "PEG-6": {
+    "status": "PASS"
+   },
+   "PEG-3": {
+    "status": "PASS",
+    "checks": 1
+   }
+  },
+  "L3-014": {
+   "PEG-1": {
+    "status": "PASS"
+   },
+   "PEG-2": {
+    "status": "PASS"
+   },
+   "PEG-4": {
+    "status": "PASS"
+   },
+   "PEG-6": {
+    "status": "PASS"
+   },
+   "PEG-3": {
+    "status": "SKIP",
+    "reason": "BLOCKED 案例无权威真值"
+   }
+  },
+  "L1-015": {
+   "PEG-1": {
+    "status": "PASS"
+   },
+   "PEG-2": {
+    "status": "PASS"
+   },
+   "PEG-4": {
+    "status": "PASS"
+   },
+   "PEG-6": {
+    "status": "PASS"
+   },
+   "PEG-3": {
+    "status": "NA",
+    "reason": "无数学重算项（结构/E2E 型）"
+   }
+  },
+  "L4-016": {
+   "PEG-1": {
+    "status": "PASS"
+   },
+   "PEG-2": {
+    "status": "PASS"
+   },
+   "PEG-4": {
+    "status": "PASS"
+   },
+   "PEG-6": {
+    "status": "PASS"
+   },
+   "PEG-3": {
+    "status": "PASS",
+    "checks": 5
+   }
+  },
+  "L4-017": {
+   "PEG-1": {
+    "status": "PASS"
+   },
+   "PEG-2": {
+    "status": "PASS"
+   },
+   "PEG-4": {
+    "status": "PASS"
+   },
+   "PEG-6": {
+    "status": "PASS"
+   },
+   "PEG-3": {
+    "status": "PASS",
+    "checks": 5
+   }
+  },
+  "L4-018": {
+   "PEG-1": {
+    "status": "PASS"
+   },
+   "PEG-2": {
+    "status": "PASS"
+   },
+   "PEG-4": {
+    "status": "PASS"
+   },
+   "PEG-6": {
+    "status": "PASS"
+   },
+   "PEG-3": {
+    "status": "NA",
+    "reason": "无数学重算项（结构/E2E 型）"
+   }
+  },
+  "L4-019": {
+   "PEG-1": {
+    "status": "PASS"
+   },
+   "PEG-2": {
+    "status": "PASS"
+   },
+   "PEG-4": {
+    "status": "PASS"
+   },
+   "PEG-6": {
+    "status": "PASS"
+   },
+   "PEG-3": {
+    "status": "NA",
+    "reason": "无数学重算项（结构/E2E 型）"
+   }
+  },
+  "L6-020": {
+   "PEG-1": {
+    "status": "PASS"
+   },
+   "PEG-2": {
+    "status": "PASS"
+   },
+   "PEG-4": {
+    "status": "PASS"
+   },
+   "PEG-6": {
+    "status": "PASS"
+   },
+   "PEG-3": {
+    "status": "NA",
+    "reason": "无数学重算项（结构/E2E 型）"
+   }
+  },
+  "L6-021": {
+   "PEG-1": {
+    "status": "PASS"
+   },
+   "PEG-2": {
+    "status": "PASS"
+   },
+   "PEG-4": {
+    "status": "PASS"
+   },
+   "PEG-6": {
+    "status": "PASS"
+   },
+   "PEG-3": {
+    "status": "NA",
+    "reason": "无数学重算项（结构/E2E 型）"
+   }
+  },
+  "L6-022": {
+   "PEG-1": {
+    "status": "PASS"
+   },
+   "PEG-2": {
+    "status": "PASS"
+   },
+   "PEG-4": {
+    "status": "PASS"
+   },
+   "PEG-6": {
+    "status": "PASS"
+   },
+   "PEG-3": {
+    "status": "NA",
+    "reason": "无数学重算项（结构/E2E 型）"
+   }
+  },
+  "L6-023": {
+   "PEG-1": {
+    "status": "PASS"
+   },
+   "PEG-2": {
+    "status": "PASS"
+   },
+   "PEG-4": {
+    "status": "PASS"
+   },
+   "PEG-6": {
+    "status": "PASS"
+   },
+   "PEG-3": {
+    "status": "NA",
+    "reason": "无数学重算项（结构/E2E 型）"
+   }
+  },
+  "L6-037": {
+   "PEG-1": {
+    "status": "PASS"
+   },
+   "PEG-2": {
+    "status": "PASS"
+   },
+   "PEG-4": {
+    "status": "PASS"
+   },
+   "PEG-6": {
+    "status": "PASS"
+   },
+   "PEG-3": {
+    "status": "PASS",
+    "checks": 2
+   }
+  },
+  "E2E-001": {
+   "PEG-1": {
+    "status": "PASS"
+   },
+   "PEG-2": {
+    "status": "PASS"
+   },
+   "PEG-4": {
+    "status": "PASS"
+   },
+   "PEG-6": {
+    "status": "PASS"
+   },
+   "PEG-3": {
+    "status": "NA",
+    "reason": "无数学重算项（结构/E2E 型）"
+   }
+  },
+  "E2E-002": {
+   "PEG-1": {
+    "status": "PASS"
+   },
+   "PEG-2": {
+    "status": "PASS"
+   },
+   "PEG-4": {
+    "status": "PASS"
+   },
+   "PEG-6": {
+    "status": "PASS"
+   },
+   "PEG-3": {
+    "status": "NA",
+    "reason": "无数学重算项（结构/E2E 型）"
+   }
+  },
+  "E2E-003a": {
+   "PEG-1": {
+    "status": "PASS"
+   },
+   "PEG-2": {
+    "status": "PASS"
+   },
+   "PEG-4": {
+    "status": "PASS"
+   },
+   "PEG-6": {
+    "status": "PASS"
+   },
+   "PEG-3": {
+    "status": "NA",
+    "reason": "无数学重算项（结构/E2E 型）"
+   }
+  },
+  "E2E-003b": {
+   "PEG-1": {
+    "status": "PASS"
+   },
+   "PEG-2": {
+    "status": "PASS"
+   },
+   "PEG-4": {
+    "status": "PASS"
+   },
+   "PEG-6": {
+    "status": "PASS"
+   },
+   "PEG-3": {
+    "status": "NA",
+    "reason": "无数学重算项（结构/E2E 型）"
+   }
+  },
+  "E2E-004a": {
+   "PEG-1": {
+    "status": "PASS"
+   },
+   "PEG-2": {
+    "status": "PASS"
+   },
+   "PEG-4": {
+    "status": "PASS"
+   },
+   "PEG-6": {
+    "status": "PASS"
+   },
+   "PEG-3": {
+    "status": "NA",
+    "reason": "无数学重算项（结构/E2E 型）"
+   }
+  },
+  "E2E-004b": {
+   "PEG-1": {
+    "status": "PASS"
+   },
+   "PEG-2": {
+    "status": "PASS"
+   },
+   "PEG-4": {
+    "status": "PASS"
+   },
+   "PEG-6": {
+    "status": "PASS"
+   },
+   "PEG-3": {
+    "status": "NA",
+    "reason": "无数学重算项（结构/E2E 型）"
+   }
+  },
+  "E2E-005a": {
+   "PEG-1": {
+    "status": "PASS"
+   },
+   "PEG-2": {
+    "status": "PASS"
+   },
+   "PEG-4": {
+    "status": "PASS"
+   },
+   "PEG-6": {
+    "status": "PASS"
+   },
+   "PEG-3": {
+    "status": "NA",
+    "reason": "无数学重算项（结构/E2E 型）"
+   }
+  },
+  "E2E-005b": {
+   "PEG-1": {
+    "status": "PASS"
+   },
+   "PEG-2": {
+    "status": "PASS"
+   },
+   "PEG-4": {
+    "status": "PASS"
+   },
+   "PEG-6": {
+    "status": "PASS"
+   },
+   "PEG-3": {
+    "status": "NA",
+    "reason": "无数学重算项（结构/E2E 型）"
+   }
+  },
+  "L3-024": {
+   "PEG-1": {
+    "status": "PASS"
+   },
+   "PEG-2": {
+    "status": "PASS"
+   },
+   "PEG-4": {
+    "status": "PASS"
+   },
+   "PEG-6": {
+    "status": "PASS"
+   },
+   "PEG-3": {
+    "status": "NA",
+    "reason": "无数学重算项（结构/E2E 型）"
+   }
+  },
+  "L3-025": {
+   "PEG-1": {
+    "status": "PASS"
+   },
+   "PEG-2": {
+    "status": "PASS"
+   },
+   "PEG-4": {
+    "status": "PASS"
+   },
+   "PEG-6": {
+    "status": "PASS"
+   },
+   "PEG-3": {
+    "status": "SKIP",
+    "reason": "BLOCKED 案例无权威真值"
+   }
+  },
+  "L3-026": {
+   "PEG-1": {
+    "status": "PASS"
+   },
+   "PEG-2": {
+    "status": "PASS"
+   },
+   "PEG-4": {
+    "status": "PASS"
+   },
+   "PEG-6": {
+    "status": "PASS"
+   },
+   "PEG-3": {
+    "status": "SKIP",
+    "reason": "BLOCKED 案例无权威真值"
+   }
+  },
+  "L2-027": {
+   "PEG-1": {
+    "status": "PASS"
+   },
+   "PEG-2": {
+    "status": "PASS"
+   },
+   "PEG-4": {
+    "status": "PASS"
+   },
+   "PEG-6": {
+    "status": "PASS"
+   },
+   "PEG-3": {
+    "status": "NA",
+    "reason": "无数学重算项（结构/E2E 型）"
+   }
+  },
+  "L1-028": {
+   "PEG-1": {
+    "status": "PASS"
+   },
+   "PEG-2": {
+    "status": "PASS"
+   },
+   "PEG-4": {
+    "status": "PASS"
+   },
+   "PEG-6": {
+    "status": "PASS"
+   },
+   "PEG-3": {
+    "status": "SKIP",
+    "reason": "BLOCKED 案例无权威真值"
+   }
+  },
+  "L1-029": {
+   "PEG-1": {
+    "status": "PASS"
+   },
+   "PEG-2": {
+    "status": "PASS"
+   },
+   "PEG-4": {
+    "status": "PASS"
+   },
+   "PEG-6": {
+    "status": "PASS"
+   },
+   "PEG-3": {
+    "status": "NA",
+    "reason": "无数学重算项（结构/E2E 型）"
+   }
+  },
+  "L4-030": {
+   "PEG-1": {
+    "status": "PASS"
+   },
+   "PEG-2": {
+    "status": "PASS"
+   },
+   "PEG-4": {
+    "status": "PASS"
+   },
+   "PEG-6": {
+    "status": "PASS"
+   },
+   "PEG-3": {
+    "status": "NA",
+    "reason": "无数学重算项（结构/E2E 型）"
+   }
+  },
+  "L5-031": {
+   "PEG-1": {
+    "status": "PASS"
+   },
+   "PEG-2": {
+    "status": "PASS"
+   },
+   "PEG-4": {
+    "status": "PASS"
+   },
+   "PEG-6": {
+    "status": "PASS"
+   },
+   "PEG-3": {
+    "status": "NA",
+    "reason": "无数学重算项（结构/E2E 型）"
+   }
+  },
+  "L5-032": {
+   "PEG-1": {
+    "status": "PASS"
+   },
+   "PEG-2": {
+    "status": "PASS"
+   },
+   "PEG-4": {
+    "status": "PASS"
+   },
+   "PEG-6": {
+    "status": "PASS"
+   },
+   "PEG-3": {
+    "status": "NA",
+    "reason": "无数学重算项（结构/E2E 型）"
+   }
+  },
+  "L6-038": {
+   "PEG-1": {
+    "status": "PASS"
+   },
+   "PEG-2": {
+    "status": "PASS"
+   },
+   "PEG-4": {
+    "status": "PASS"
+   },
+   "PEG-6": {
+    "status": "PASS"
+   },
+   "PEG-3": {
+    "status": "NA",
+    "reason": "无数学重算项（结构/E2E 型）"
+   }
+  },
+  "HO-033": {
+   "PEG-1": {
+    "status": "PASS"
+   },
+   "PEG-2": {
+    "status": "PASS"
+   },
+   "PEG-4": {
+    "status": "PASS"
+   },
+   "PEG-6": {
+    "status": "PASS"
+   },
+   "PEG-3": {
+    "status": "SKIP",
+    "reason": "BLOCKED 案例无权威真值"
+   }
+  },
+  "HO-034": {
+   "PEG-1": {
+    "status": "PASS"
+   },
+   "PEG-2": {
+    "status": "PASS"
+   },
+   "PEG-4": {
+    "status": "PASS"
+   },
+   "PEG-6": {
+    "status": "PASS"
+   },
+   "PEG-3": {
+    "status": "SKIP",
+    "reason": "BLOCKED 案例无权威真值"
+   }
+  },
+  "HO-035": {
+   "PEG-1": {
+    "status": "PASS"
+   },
+   "PEG-2": {
+    "status": "PASS"
+   },
+   "PEG-4": {
+    "status": "PASS"
+   },
+   "PEG-6": {
+    "status": "PASS"
+   },
+   "PEG-3": {
+    "status": "SKIP",
+    "reason": "BLOCKED 案例无权威真值"
+   }
+  },
+  "HO-036": {
+   "PEG-1": {
+    "status": "PASS"
+   },
+   "PEG-2": {
+    "status": "PASS"
+   },
+   "PEG-4": {
+    "status": "PASS"
+   },
+   "PEG-6": {
+    "status": "PASS"
+   },
+   "PEG-3": {
+    "status": "SKIP",
+    "reason": "BLOCKED 案例无权威真值"
+   }
+  }
+ },
+ "totals": {
+  "PEG-1": {
+   "pass": 41,
+   "fail": 0,
+   "skip": 0,
+   "na": 0
+  },
+  "PEG-2": {
+   "pass": 41,
+   "fail": 0,
+   "skip": 0,
+   "na": 0
+  },
+  "PEG-3": {
+   "pass": 11,
+   "fail": 0,
+   "skip": 8,
+   "na": 22
+  },
+  "PEG-4": {
+   "pass": 41,
+   "fail": 0,
+   "skip": 0,
+   "na": 0
+  },
+  "PEG-5": {
+   "pass": 1,
+   "fail": 0,
+   "skip": 0,
+   "na": 0
+  },
+  "PEG-6": {
+   "pass": 41,
+   "fail": 0,
+   "skip": 0,
+   "na": 0
+  }
+ },
+ "overall": "PASS"
+}

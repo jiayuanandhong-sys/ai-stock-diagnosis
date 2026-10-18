@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Evals v1.2 · PM D4/D5 裁决落实报告</title>
+<style>
+  body{font-family:"Microsoft YaHei","PingFang SC",sans-serif;max-width:1080px;margin:24px auto;padding:0 28px;color:#1f2937;line-height:1.65;background:#fff}
+  h1{font-size:22px;border-bottom:3px solid #1e40af;padding-bottom:8px;color:#1e3a8a}
+  h2{font-size:17px;color:#1e40af;margin-top:28px;border-left:4px solid #1e40af;padding-left:10px}
+  h3{font-size:15px;color:#374151;margin:16px 0 6px}
+  table{border-collapse:collapse;width:100%;font-size:13px;margin:10px 0}
+  th{background:#eff6ff;color:#1e3a8a}
+  th,td{border:1px solid #cbd5e1;padding:6px 9px;text-align:left;vertical-align:top}
+  code{background:#f1f5f9;padding:1px 5px;border-radius:3px;font-size:12.5px;font-family:Consolas,monospace}
+  .ok{color:#15803d;font-weight:600}.bad{color:#b91c1c;font-weight:600}.warn{color:#b45309;font-weight:600}
+  .tag{display:inline-block;font-size:11.5px;padding:1px 8px;border-radius:10px;margin-right:5px}
+  .t-ok{background:#dcfce7;color:#166534}.t-bad{background:#fee2e2;color:#991b1b}
+  .t-warn{background:#fef3c7;color:#92400e}.t-info{background:#dbeafe;color:#1e40af}
+  .box{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px 14px;margin:10px 0;font-size:13px}
+  .meta{color:#6b7280;font-size:12.5px}
+  pre{background:#0f172a;color:#e2e8f0;padding:12px;border-radius:8px;font-size:12px;overflow-x:auto;font-family:Consolas,monospace}
+  .num{font-variant-numeric:tabular-nums}
+</style>
+</head>
+<body>
+
+<h1>Evals v1.2 · PM D4/D5 裁决落实报告<br><span style="font-size:14px;color:#475569">REQ-003 提前复核三条件全自动判断（OPEN-E09 定案 + 条件2 自动获取公告定向）</span></h1>
+<p class="meta">运行标识 run_20261018T051608Z ｜ 数据集清单 v1.2（PEG-1~6 全绿）｜ PEG 检查器 v1.1.0 ｜ Schema v1.1 ｜ 2026-10-18</p>
+
+<h2>一、两项 PM 决议与落实路径</h2>
+<table>
+<tr><th style="width:120px">决议</th><th>内容</th><th style="width:330px">落实</th><th style="width:70px">状态</th></tr>
+<tr><td><b>D5 OPEN-E09</b></td><td>成交结构异常 = <b>近 5 日平均成交量 &gt; 2 × 近 20 日平均成交量</b>（严格大于）</td><td>产品 <code>trade_cal.volume_anomaly_ratio</code> 实现；L6-037 条件3 断言真实执行（含恰 2.0 边界样本）</td><td class="ok">✅ 完成</td></tr>
+<tr><td><b>D4 REQ-003 条件2</b></td><td>系统<b>自动获取</b>股票公告/财报发布时间，检测到符合条件的公告时提醒提前复核</td><td>产品新增 <code>src/announcement_source.py</code>（cninfo 拉取+缓存+可注入）；L6-037 条件2 断言真实执行（注入式三态）</td><td class="ok">✅ 完成</td></tr>
+</table>
+<div class="box"><b>实现约定（PM 可调整，均已在代码与数据集留痕）：</b>① vol5/vol20 两窗口均以最新交易日为端点（20 日窗含最近 5 日）；「超过 2 倍」按<b>严格大于</b>执行（恰 2.0 不触发）；② 公告源为巨潮资讯 cninfo（akshare <code>stock_zh_a_disclosure_report_cninfo</code>，近 180 日窗口，当日缓存复用，网络失败回退旧缓存/降级通用提示语）；③ 符合条件关键词：业绩预告/业绩快报/年度报告/半年度报告/第一季度报告/第三季度报告（<b>业绩说明会不命中</b>）；④ 检测窗口默认近 10 自然日。</div>
+
+<h2>二、产品侧变更（PM 显式定向范围，最小侵入）</h2>
+<table>
+<tr><th style="width:250px">文件</th><th>变更</th></tr>
+<tr><td><code>src/announcement_source.py</code> <span class="tag t-info">新增</span></td><td>公告数据源：cninfo 拉取 + JSON 缓存（原子写）+ 网络失败降级；<code>is_qualifying</code>/<code>detect_qualifying</code> 纯函数（窗口 (as_of−10, as_of] 闭开区间），支持注入确定性测试；非 6 位数字代码不发起网络</td></tr>
+<tr><td><code>src/trade_cal.py</code> <span class="tag t-warn">修改</span></td><td>新增 <code>volume_anomaly_ratio</code>（数据不足 20 根/零均值 → None 不判定）；<code>early_review_flags(panel, code, announcements="auto")</code> 三条件全自动判断，<b>向后兼容</b>：公告数据不可得时保留原通用提示语（条件1 行为与文案零变化）</td></tr>
+<tr><td><code>tests/test_trade_cal.py</code> <span class="tag t-info">新增</span></td><td>16 用例全离线确定性：条件3 触发/恰2.0边界/数据不足/零均值；条件2 命中/非符合（业绩说明会）/窗口外/合成代码降级/None 显式关闭；条件1 回归</td></tr>
+<tr><td>Spec / Plan / Tasks / 18 因子算法 / 评分规则</td><td class="ok">零修改</td></tr>
+</table>
+
+<h2>三、测试证据（全部真实执行）</h2>
+<table>
+<tr><th>测试</th><th style="width:110px">结果</th><th>关键证据</th></tr>
+<tr><td>产品单测 <code>tests/test_trade_cal.py</code></td><td class="ok num">16/16 OK</td><td>比值 2.5 触发 / 恰 2.0 不触发；《业绩预告》命中、业绩说明会/民事上诉状不命中；窗口边界（10 日开区间下界不入、当日入）</td></tr>
+<tr><td>既有产品测试回归（4 套）</td><td class="ok num">4/4 OK</td><td>compliance / factor_engine / interpretation / pool_manager 全绿，零回归</td></tr>
+<tr><td>真实网络冒烟 <code>announcement_source.__main__</code></td><td class="ok">✅ 通过</td><td>600768（富邦新材）实拉 <b>42 条</b>公告并落缓存；业绩说明会等非披露类 qualifying=False 判定正确</td></tr>
+<tr><td>PEG 单测（v1.1.0）</td><td class="ok num">18/18 OK</td><td>新增 4 例：vol_ratio 正确通过/错误值拦截/序列不足 raise 转 FAIL/pm_decision 层级合法</td></tr>
+<tr><td>基础设施回归（3 套）</td><td class="ok num">31/31 OK</td><td>freeze_gate 8 + runner_gate 10 + aggregation 13，BugFix 行为零回归</td></tr>
+<tr><td>数据集重建 + PEG 冻结</td><td class="ok">✅ v1.2</td><td>PEG-1~6 全绿（PEG-3 数学复算扩至 11 案例）；FROZEN 33 / BLOCKED 8；exit 0</td></tr>
+<tr><td>Runner 全量复跑</td><td class="ok">✅ 完成</td><td>启动门禁通过（清单 v1.2 有效、sha256 逐案例一致）；退出码 2（未完整验收）</td></tr>
+</table>
+
+<h2>四、L6-037 评测升级：4 → 7 断言，全部真实执行</h2>
+<table>
+<tr><th>断言</th><th style="width:64px">风险</th><th style="width:74px">层级</th><th>验证内容 → 结果</th></tr>
+<tr><td><code>week_change_trigger_on/off</code></td><td>P1</td><td>spec</td><td>条件1 ±7.0%/+2.0% 双向（原有，不变）→ <b class="ok">PASS</b></td></tr>
+<tr><td><code>volume_anomaly_trigger_on</code></td><td>P1</td><td>pm_decision</td><td>SYN-VTRIG：vol5=5M、vol20=2M → 产品比值 <b class="num">2.5</b>，触发语含「2.5 倍 + 成交结构异常」→ <b class="ok">PASS</b></td></tr>
+<tr><td><code>volume_anomaly_boundary_off</code></td><td>P1</td><td>pm_decision</td><td>SYN-VEDGE：vol5=3M、vol20=1.5M → 比值恰 <b class="num">2.0</b>，<b>不触发</b>（严格大于语义锁定）；通用提示语在 → <b class="ok">PASS</b></td></tr>
+<tr><td><code>announcement_trigger_on</code></td><td>P1</td><td>pm_decision</td><td>窗口内《第三季度业绩预告》→ 触发语含标题+披露日期+提前复核；三条件均可判定时通用提示语收敛 → <b class="ok">PASS</b></td></tr>
+<tr><td><code>announcement_nonqualifying_off</code></td><td>P1</td><td>pm_decision</td><td>业绩说明会公告（非披露事项）→ 不触发；无其他触发事项 → flags 为空 → <b class="ok">PASS</b></td></tr>
+<tr><td><code>announcement_window_off</code></td><td>P1</td><td>pm_decision</td><td>符合条件的公告但披露日在 10 日窗口外 → 不触发 → <b class="ok">PASS</b></td></tr>
+</table>
+<p class="meta">原「条件2/3 NOT_RUN（实现缺口/口径未定义）」两断言已删除并由上述真实断言取代。真值独立性：比值 2.5/2.0 为手算（PEG-3 vol_ratio 独立复算同源校验）；触发/不触发语义来自 PM D4/D5 决议（source_tier=pm_decision，Schema v1.1 新层级）。</p>
+
+<h2>五、复跑结果与前后对比（run_20261018T051608Z）</h2>
+<table>
+<tr><th>指标</th><th class="num">v1.1（修复后基线）</th><th class="num">v1.2（本轮）</th><th>变化</th></tr>
+<tr><td>案例 PASS</td><td class="num">11</td><td class="num"><b>12</b></td><td class="ok">+1（L6-037 PARTIAL→PASS）</td></tr>
+<tr><td>案例 PARTIAL</td><td class="num">17</td><td class="num"><b>16</b></td><td class="ok">−1</td></tr>
+<tr><td>FAIL / BLOCKED / NOT_RUN</td><td class="num">0 / 8 / 5</td><td class="num"><b>0 / 8 / 5</b></td><td>不变</td></tr>
+<tr><td>断言级 P/F/NR</td><td class="num">58 / 0 / 41</td><td class="num"><b>63 / 0 / 39</b></td><td>+5 PASS、−2 NOT_RUN（7 断言取代 2 NOT_RUN，账目吻合）</td></tr>
+<tr><td>分风险完整通过率</td><td class="num">P0 6/17 · P1 5/22 · P2 0/2</td><td class="num">P0 6/17 · <b>P1 6/22</b> · P2 0/2</td><td>L6-037 为 P1</td></tr>
+<tr><td>退出码 / 判定</td><td>2 · 未完整验收</td><td>2 · <b>未完整验收</b></td><td>维持（BLOCKED/NOT_RUN 未清零）</td></tr>
+</table>
+<p class="meta">其余 40 案例断言结果逐条不变。P0 未完整执行 11 例（E2E-001/HO-033~035/L2-008/L3-013/L4-016~019/L6-023）仍不得声明对应风险已验证。</p>
+
+<h2>六、剩余未决与放行前清单</h2>
+<table>
+<tr><th>事项</th><th style="width:90px">状态</th><th>责任/解锁条件</th></tr>
+<tr><td>LLM Judge 全部断言 + 人工校准</td><td class="bad">NOT_RUN</td><td>配置真实 LLM 密钥后执行（rubric/prompt 已定稿）</td></tr>
+<tr><td>E2E HTTP 层（服务启动、DOCX 一致性）</td><td class="bad">NOT_RUN</td><td>启动完整服务链路</td></tr>
+<tr><td>BLOCKED 8 例（holdout×4、OPEN-E02/E03、C-01、备源证据）</td><td class="warn">BLOCKED</td><td>PM 裁决 / 证据补齐</td></tr>
+<tr><td>PARTIAL 16 例（含 L4-016~019 的 Judge 断言）</td><td class="warn">PARTIAL</td><td>多数依赖 LLM Judge 执行后转终态</td></tr>
+<tr><td>REQ-003 条件2/3 产品缺口</td><td class="ok">✅ 清零</td><td>本轮 D4/D5 落实（原 v1.1 待办撤销）</td></tr>
+</table>
+
+<h2>七、复现命令</h2>
+<pre>cd evals/peg     && python test_peg_checker.py     # 18/18
+cd evals/tests   && python test_freeze_gate.py      # 8/8
+                  python test_runner_gate.py        # 10/10
+                  python test_status_aggregation.py # 13/13
+cd evals/dataset && python build_dataset.py         # PEG 全绿 → 清单 v1.2，exit 0
+cd evals/runner  && python run_evals.py             # 12/0/16/8/5，exit 2
+cd &lt;产品根&gt;/tests && python test_trade_cal.py       # 16/16（离线确定性）
+cd &lt;产品根&gt;/src   && python announcement_source.py  # 真实网络冒烟（600768）</pre>
+
+<p class="meta">本报告仅记录 REQ-003 条件2/3 自动判断能力的工程落实与验证，不构成产品放行判定；放行归 release-acceptance 流程（PM 裁决）。</p>
+</body>
+</html>

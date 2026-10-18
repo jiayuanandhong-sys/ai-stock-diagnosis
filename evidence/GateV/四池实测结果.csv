@@ -1,0 +1,5 @@
+﻿pool,target,n_sample,n_failed_members,factors_valid,S,H,factor_scores_max_diff,S_recheck_diff,F4_handcheck_ok,S_raw_eq_factor_mean,series_weeks,seconds,verdict
+沪深300,000001,14,0,18,100.0,100.0,0.0,0.0,True,True,53,3.3,PASS
+中证500,000009,14,0,18,71.4,63.5,0.0,0.0,True,True,53,30.3,PASS
+中证1000,000012,14,0,18,71.4,65.4,0.0,0.0,True,True,53,23.3,PASS
+中证2000,000011,14,0,18,100.0,100.0,0.0,0.0,True,True,53,32.1,PASS

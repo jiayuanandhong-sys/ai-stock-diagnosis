@@ -1,0 +1,16 @@
+test_no_key_builds_template (test_interpretation.TestFactory.test_no_key_builds_template) ... ok
+test_unconfigured_returns_template_result (test_interpretation.TestFactory.test_unconfigured_returns_template_result) ... ok
+test_with_key_builds_llm (test_interpretation.TestFactory.test_with_key_builds_llm) ... ok
+test_llm_fail_once_then_clean_uses_llm (test_interpretation.TestHardGate.test_llm_fail_once_then_clean_uses_llm) ... ok
+test_llm_forbidden_twice_falls_back_to_template (test_interpretation.TestHardGate.test_llm_forbidden_twice_falls_back_to_template) ... ok
+test_llm_network_error_falls_back (test_interpretation.TestHardGate.test_llm_network_error_falls_back) ... ok
+test_template_output_always_passes_gate (test_interpretation.TestHardGate.test_template_output_always_passes_gate) ... ok
+test_context_fields (test_interpretation.TestInterface.test_context_fields) ... ok
+test_result_fields (test_interpretation.TestInterface.test_result_fields) ... ok
+test_compliance_baseline_statements (test_interpretation.TestTemplateStyle.test_compliance_baseline_statements) ... ok
+test_spike2_structure (test_interpretation.TestTemplateStyle.test_spike2_structure) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 0.001s
+
+OK

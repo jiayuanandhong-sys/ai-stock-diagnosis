@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Evals 基础设施 BugFix 报告 v1.1（AI量化个股诊断 MVP）</title>
+<style>
+  :root{
+    --ink:#1a2332; --sub:#5a6b85; --line:#dce3ee; --bg:#f7f9fc; --card:#ffffff;
+    --blue:#2563eb; --blue-bg:#eff6ff; --green:#15803d; --green-bg:#f0fdf4;
+    --red:#b91c1c; --red-bg:#fef2f2; --amber:#b45309; --amber-bg:#fffbeb;
+    --gray:#6b7280; --gray-bg:#f3f4f6;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:"Microsoft YaHei","PingFang SC",sans-serif;color:var(--ink);
+       background:var(--bg);line-height:1.75;font-size:14px;padding:32px 0}
+  .page{max-width:980px;margin:0 auto;background:var(--card);border:1px solid var(--line);
+        border-radius:10px;padding:40px 48px}
+  h1{font-size:22px;margin-bottom:4px}
+  .meta{color:var(--sub);font-size:12.5px;margin-bottom:20px;padding-bottom:16px;
+        border-bottom:2px solid var(--ink)}
+  h2{font-size:16.5px;margin:30px 0 10px;padding-left:10px;border-left:4px solid var(--blue)}
+  h3{font-size:14.5px;margin:18px 0 8px}
+  p{margin:6px 0}
+  table{width:100%;border-collapse:collapse;margin:10px 0;font-size:13px}
+  th{background:var(--blue-bg);color:var(--ink);font-weight:600;text-align:left;
+     padding:7px 10px;border:1px solid var(--line)}
+  td{padding:6px 10px;border:1px solid var(--line);vertical-align:top}
+  tr:nth-child(even) td{background:#fafbfd}
+  code{background:var(--gray-bg);padding:1px 5px;border-radius:3px;font-size:12.5px;
+       font-family:Consolas,monospace}
+  .tag{display:inline-block;padding:1px 9px;border-radius:9px;font-size:12px;font-weight:600;white-space:nowrap}
+  .t-green{background:var(--green-bg);color:var(--green)}
+  .t-red{background:var(--red-bg);color:var(--red)}
+  .t-amber{background:var(--amber-bg);color:var(--amber)}
+  .t-gray{background:var(--gray-bg);color:var(--gray)}
+  .t-blue{background:var(--blue-bg);color:var(--blue)}
+  .t-purple{background:#f5f3ff;color:#6d28d9}
+  .banner{border-radius:8px;padding:14px 18px;margin:14px 0;font-size:13.5px}
+  .b-green{background:var(--green-bg);border:1px solid #bbf7d0}
+  .b-blue{background:var(--blue-bg);border:1px solid #bfdbfe}
+  .b-amber{background:var(--amber-bg);border:1px solid #fde68a}
+  .b-red{background:var(--red-bg);border:1px solid #fecaca}
+  .stats{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:12px 0}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:8px;
+        padding:12px 10px;text-align:center}
+  .stat b{font-size:22px;display:block}
+  .stat span{font-size:11.5px;color:var(--sub)}
+  .sg{color:var(--green)} .sr{color:var(--red)} .sa{color:var(--amber)} .sb{color:var(--blue)} .sp{color:#6d28d9}
+  ul,ol{padding-left:22px;margin:6px 0}
+  li{margin:3px 0}
+  .mono{font-family:Consolas,monospace;font-size:12px;background:var(--gray-bg);
+        padding:10px 14px;border-radius:6px;white-space:pre-wrap;margin:8px 0}
+  .del{color:var(--red);text-decoration:line-through}
+  .ins{color:var(--green);font-weight:600}
+  .foot{margin-top:28px;padding-top:14px;border-top:1px solid var(--line);
+        color:var(--sub);font-size:12px}
+  @media print{body{background:#fff;padding:0}.page{border:none;max-width:100%}}
+</style>
+</head>
+<body>
+<div class="page">
+
+<h1>Evals 基础设施 BugFix 报告 v1.1</h1>
+<div class="meta">
+AI 量化个股诊断 MVP ｜ 修复对象：冻结门禁（Bug 1）与五状态聚合（Bug 2）｜ 2026-10-18<br>
+复跑 run_id <b>20261018T050132Z</b> ｜ 新增回归测试 31 项（8+10+13，全部通过）｜ 产品 Spec/Plan/Tasks/代码零修改
+</div>
+
+<div class="banner b-green">
+<b>结论</b>：两个 Bug 均已被<b>真实测试证明修复</b>（先复现实证 → 31 项失败测试 → 修复 → 全绿 →
+41 案例真实复跑）。修复后真实状态：<b>PASS=11 / FAIL=0 / PARTIAL=17 / BLOCKED=8 / NOT_RUN=5，
+退出码 2（未完整验收）</b>。原 v1.0 报告的「28 PASS / GO-候选」中 17 个 PASS 实为部分通过被高估，
+本轮修正为 PARTIAL——这是更严格的真实状态，不是回归。
+</div>
+
+<h2>1. 根因分析</h2>
+
+<h3>1.1 Bug 1：PEG 失败后仍可能冻结数据集并允许 Runner 执行</h3>
+<p><b>根因（build_dataset.py 原 L939）</b>：冻结判定 <code>frozen = (c["status"]=="FROZEN" and
+report["overall"]=="PASS")</code> 本身正确，但清单状态回退分支
+<code>"status": "FROZEN" if frozen else c["status"]</code> 的回退值就是案例自身的
+<b>"FROZEN"</b>（数据集构建时所有非 BLOCKED 案例的 status 字段）——overall=FAIL 时
+frozen=False，清单却照样标 FROZEN。本会话上午的运行日志留有直接实证：
+「PEG 校验: overall=FAIL … 冻结清单：FROZEN=33」。脚本退出码恒为 0。</p>
+<p><b>Runner 侧（Bug 1b）</b>：main() 把 <code>peg_report_overall</code> 只写进结果元数据、
+从不强制校验；对被误标 FROZEN 的案例照常执行评测。</p>
+<p><b>复现实证（修复前，logs/bugfix_repro.log）</b>：注入 overall=FAIL 的 PEG 报告 →
+清单中 C1/C2 仍标 FROZEN，旧有效清单被覆盖，退出码 0。<b>缺陷确认。</b></p>
+
+<h3>1.2 Bug 2：部分通过的案例被错误标记为 PASS</h3>
+<p><b>根因（run_evals.py 原 L700-706）</b>：案例聚合为
+<code>if "FAIL" in statuses: FAIL; elif "PASS" in statuses: PASS; else: NOT_RUN</code>
+——只要存在一条 PASS、零 FAIL 即 PASS，<b>NOT_RUN 断言被完全吞掉</b>。</p>
+<p><b>复现实证（修复前）</b>：v1.0 运行结果中 <b>17 个案例</b>被标 PASS 但各含 1–2 条
+NOT_RUN 必需断言（含任务点名的 L4-016/017/018/019：禁词扫描 PASS + LLM Judge NOT_RUN
+→ 整案例 PASS）。<b>缺陷确认。</b></p>
+
+<h2>2. 修复内容与关键差异</h2>
+
+<h3>2.1 Bug 1 修复：严格冻结门禁（dataset/build_dataset.py + runner/run_evals.py）</h3>
+<table>
+<tr><th style="width:24%">位置</th><th>修复前 → 修复后</th></tr>
+<tr><td>publish_manifest<br>（新增函数）</td>
+    <td><span class="del">清单无条件写入，状态回退到案例自身 status</span> →
+        拆出独立发布函数：overall≠PASS 时<b>拒绝发布</b>（valid=false 的
+        rejected 清单落盘，案例标 NOT_FROZEN；既有有效 frozen_manifest.json
+        <b>原样保留</b>）；案例级门 FAIL → 标 REJECTED_GATE_FAIL（防御性双保险）；
+        <b>原子写入</b>（.tmp + replace，中途失败不留半成品）；写入异常 → 拒绝发布</td></tr>
+<tr><td>run_peg_and_freeze</td>
+    <td><span class="del">返回 None，退出码 0</span> → 返回 bool；
+        main 守卫 <code>sys.exit(0 if ok else 3)</code></td></tr>
+<tr><td>validate_freeze_gate<br>（新增函数）</td>
+    <td>Runner 启动强制校验：<b>valid=true + PEG 总体 PASS + 案例集一致 +
+        逐案例 sha256 匹配（防篡改）+ BLOCKED 不得伪装 FROZEN</b>；
+        任何失败 → 退出码 2，不产生评测结果、不创建结果目录</td></tr>
+</table>
+
+<h3>2.2 Bug 2 修复：五状态聚合（runner/run_evals.py）</h3>
+<table>
+<tr><th style="width:24%">位置</th><th>修复前 → 修复后</th></tr>
+<tr><td>aggregate_status<br>（新增函数）</td>
+    <td><span class="del">PASS in statuses → PASS（NOT_RUN 被吞）</span> →
+        五状态确定性聚合：<b>未冻结→BLOCKED（即使有 PASS 断言）；
+        任一必需 FAIL→FAIL（最高优先级）；PASS+NOT_RUN 并存→PARTIAL；
+        必需全 NOT_RUN→NOT_RUN；必需全 PASS→PASS</b>。
+        断言默认必需；optional 须显式标注，未执行/失败的 optional 不改变案例状态但披露计数
+        （本轮未将任何既有断言标为 optional——那会构成放宽验收）</td></tr>
+<tr><td>exit_code_from_summary<br>（新增函数）</td>
+    <td><span class="del">恒返回 0</span> → <b>0</b> 全部必需断言通过；
+        <b>1</b> 存在实际失败（优先于未完整状态）；<b>2</b> 门禁失败/异常，
+        或存在阻碍完整验收的 PARTIAL/BLOCKED/NOT_RUN</td></tr>
+<tr><td>统计与报告</td>
+    <td>results.json / results.md 增加五状态计数、<b>分风险（P0/P1/P2）完整通过率</b>、
+        断言级统计（含可选未执行数）、<b>P0 未完整执行案例清单（不得声明已验证）</b>；
+        PARTIAL 不计入完整通过率</td></tr>
+</table>
+
+<h2>3. 新增自动化回归测试（31 项，全部通过）</h2>
+<table>
+<tr><th>测试套件</th><th>项数</th><th>覆盖</th><th>结果</th></tr>
+<tr><td>tests/test_freeze_gate.py</td><td>8</td>
+    <td>PEG PASS 正常发布（valid=true）；<b>PEG FAIL 阻断冻结+旧清单保留+rejected 落盘</b>；
+        FAIL 后零 FROZEN；案例级门 FAIL 不冻结；run_peg_and_freeze 返回值；
+        写入异常拒绝发布；<b>真实 PEG 集成负向测试</b>（无 mock：坏案例文件 → 真实
+        run_peg FAIL → 拒绝冻结）</td>
+    <td><span class="tag t-green">8/8 OK</span></td></tr>
+<tr><td>tests/test_runner_gate.py</td><td>10</td>
+    <td>清单缺失/损坏/valid=false/PEG 非 PASS/哈希篡改/案例集不一致/BLOCKED 伪装 FROZEN
+        → 全部拒绝（main 返回 2）；<b>合法 BLOCKED 存在时其他案例正常执行</b>
+        （注入执行器验证 C1 真实运行、C2 保持 BLOCKED）</td>
+    <td><span class="tag t-green">10/10 OK</span></td></tr>
+<tr><td>tests/test_status_aggregation.py</td><td>13</td>
+    <td>1P+1NR→PARTIAL；2P+1NR→PARTIAL；全 PASS→PASS；任一 FAIL→FAIL；
+        FAIL 优先于 NOT_RUN；全 NR→NOT_RUN；未冻结→BLOCKED；
+        optional 未执行/失败不影响状态但披露；确定性聚合；退出码 0/1/2 参数化</td>
+    <td><span class="tag t-green">13/13 OK</span></td></tr>
+<tr><td>peg/test_peg_checker.py（回归）</td><td>14</td><td>既有 PEG 单测零回归</td>
+    <td><span class="tag t-green">14/14 OK</span></td></tr>
+</table>
+<p><b>测试纪律</b>：先写测试并运行确认 30/30 失败（新接口不存在 = 门禁缺失的直接证据），
+再修复，再全绿；未修改任何评测预期答案、未删除断言、未放宽验证条件。</p>
+
+<h2>4. 修复后 41 案例状态汇总（run_20261018T050132Z，真实执行）</h2>
+
+<div class="stats">
+  <div class="stat"><b class="sg">11</b><span>PASS（完整通过）</span></div>
+  <div class="stat"><b class="sr">0</b><span>FAIL</span></div>
+  <div class="stat"><b class="sp">17</b><span>PARTIAL（部分通过）</span></div>
+  <div class="stat"><b class="sa">8</b><span>BLOCKED</span></div>
+  <div class="stat"><b class="sb">5</b><span>NOT_RUN</span></div>
+</div>
+
+<table>
+<tr><th>风险</th><th>总数</th><th>PASS</th><th>PARTIAL</th><th>FAIL</th><th>BLOCKED</th><th>NOT_RUN</th><th>完整通过率</th></tr>
+<tr><td><b>P0</b></td><td>17</td><td>6</td><td>6</td><td>0</td><td>3</td><td>2</td><td><b>6/17</b></td></tr>
+<tr><td>P1</td><td>22</td><td>5</td><td>10</td><td>0</td><td>5</td><td>2</td><td>5/22</td></tr>
+<tr><td>P2</td><td>2</td><td>0</td><td>1</td><td>0</td><td>0</td><td>1</td><td>0/2</td></tr>
+</table>
+
+<p><b>完整 PASS 的 11 例</b>：L1-015、L2-006、L2-007、L2-027、L3-009、L3-010、L3-011、
+L3-012、L3-024、L5-032、L6-022（必需断言全部执行且通过）。<br>
+<b>PARTIAL 的 17 例</b>：E2E-003a/b、E2E-004a/b、E2E-005a/b、L1-029、L2-008、L3-013、
+L4-016、L4-017、L4-018、L4-019、L4-030、L6-020、L6-021、L6-037——每例均有 1–2 条
+NOT_RUN 必需断言（需 LLM Judge / 需服务 / 需联网），其中用户点名的
+<b>L4-016/017/018/019 已如实转为 PARTIAL</b>（例：L4-018 禁词扫描 PASS +
+judge_D4_fabrication NOT_RUN → PARTIAL）。</p>
+
+<h2>5. 修复前后统计对比</h2>
+<table>
+<tr><th>指标</th><th>修复前（v1.0, run_…043206Z）</th><th>修复后（v1.1, run_…050132Z）</th><th>变化原因</th></tr>
+<tr><td>案例 PASS</td><td>28</td><td><b>11</b></td><td rowspan="2">17 个「部分通过」案例从 PASS 重分类为 PARTIAL（Bug 2 修复的直接结果）；断言级结果零变化（58 PASS / 0 FAIL / 41 NOT_RUN 完全一致）</td></tr>
+<tr><td>案例 PARTIAL</td><td>0（状态不存在）</td><td><b>17</b></td></tr>
+<tr><td>FAIL / BLOCKED / NOT_RUN</td><td>0 / 8 / 5</td><td>0 / 8 / 5</td><td>无变化</td></tr>
+<tr><td>轮次判定</td><td>GO-候选（P0 零失败）</td><td><b>未完整验收</b></td>
+    <td>P0 完整通过率实际为 6/17；「GO-候选」建立在 17 个被高估的 PASS 上，不再成立</td></tr>
+<tr><td>退出码</td><td>0（恒定）</td><td><b>2</b></td><td>存在 PARTIAL/BLOCKED/NOT_RUN → 按约定退出码 2</td></tr>
+<tr><td>冻结门禁</td><td>PEG FAIL 仍发布 FROZEN 清单</td><td><b>FAIL → 拒绝发布 + exit 3</b></td><td>Bug 1 修复（本轮 PEG 全绿，门禁放行）</td></tr>
+</table>
+
+<h2>6. 未运行 / 阻塞测试清单（如实披露）</h2>
+<ul>
+<li><b>LLM Judge 全部断言</b>（10 条，涉及 L3-013/L4-016~019/L4-030 等）：真实 LLM 态未配置
+    ——rubric/prompt/校准计划就绪，属 NOT_RUN，非本基础设施修复范围；</li>
+<li><b>E2E HTTP 层</b>（E2E-001/002、L5-031、L6-023、L6-038）：需启动完整服务；</li>
+<li><b>BLOCKED 8 例</b>：holdout×4（名单待 PM 指定）、L3-014（OPEN-E03 次新 H 窗口）、
+    L3-025/L3-026（OPEN-E02 调池归属、C-01 主备源冲突）、L1-028（备源连通性证据缺失）；</li>
+<li><b>REQ-003 方案A 条件2/3</b>：产品实现缺口（业绩预告数据源、成交异常阈值 OPEN-E09），
+    L6-037 相应断言 NOT_RUN。</li>
+</ul>
+<p>缺少真实 LLM 与运行中服务的证据链，<b>不能声称完整 E2E 已通过</b>；本轮结论仅覆盖
+确定性可测层的真实执行结果。</p>
+
+<h2>7. 修改文件清单</h2>
+<div class="mono">evals/
+├─ dataset/build_dataset.py     # +_write_json_atomic +publish_manifest；run_peg_and_freeze
+│                               #  改返回 bool +here 参数；exit 0/3（Bug 1）
+├─ runner/run_evals.py          # +validate_freeze_gate +aggregate_status +exit_code_from_summary；
+│                               #  Ctx.check 支持 optional；main 门禁+五状态+分风险统计；exit 0/1/2（Bug 1+2）
+├─ tests/test_freeze_gate.py    # 新增 8 项（含真实 PEG 集成负向测试）
+├─ tests/test_runner_gate.py    # 新增 10 项（门禁拒绝 + 合法 BLOCKED 可运行）
+├─ tests/test_status_aggregation.py  # 新增 13 项（五状态参数化 + 退出码）
+├─ dataset/frozen_manifest.json # 重新发布 v1.1（valid=true；41 案例哈希与数据集一致）
+├─ runner/results/run_20261018T050132Z/  # 修复后真实复跑产物
+├─ logs/bugfix_{repro,verification}.log  # 修复前实证 + 修复后验证
+├─ logs/{phase2_build,phase3_run}_evals_v11_bugfix.log
+├─ README.md                    # 工程约定 + 退出码表 + 复现命令 + v1.1 结果
+└─ reports/Evals实施报告_v1.1_BugFix.html  # 本报告
+
+零修改：产品 src/、sdd-stock-diagnosis/{spec,plan,tasks}.md、41 个评测案例定义、
+        truth_lib 真值、PEG 检查规则、历史运行记录（v0.3/v1.0 结果目录原样保留）。</div>
+
+<h2>8. 最终回答</h2>
+<table>
+<tr><th style="width:38%">问题</th><th>回答</th></tr>
+<tr><td><b>Bug 1 是否已被真实测试证明修复？</b></td>
+    <td><span class="tag t-green">是</span>。修复前复现实证（FAIL→FROZEN 33+覆盖旧清单）；
+        修复后 8 项 freeze_gate 测试 + 10 项 runner_gate 测试全绿，含无 mock 的真实 PEG
+        集成负向测试（坏案例→真实 run_peg FAIL→拒绝冻结→旧清单保留→rejected 落盘）</td></tr>
+<tr><td><b>Bug 2 是否已被真实测试证明修复？</b></td>
+    <td><span class="tag t-green">是</span>。13 项聚合参数化测试全绿；41 案例真实复跑中
+        17 个部分通过案例全部如实转 PARTIAL（断言级结果与修复前逐条一致，仅聚合修正）；
+        退出码按约定返回 2</td></tr>
+<tr><td><b>当前 Evals 工程是否能够可靠运行？</b></td>
+    <td><span class="tag t-blue">基础设施层：是</span>——门禁/冻结/聚合/退出码/统计均有自动化
+        测试守护，三条命令可确定性复现。<span class="tag t-amber">完整验收：未达成</span>——
+        判定为「未完整验收」（exit 2），17 PARTIAL + 8 BLOCKED + 5 NOT_RUN 未清零</td></tr>
+<tr><td><b>距离完整 Evals 验收还缺哪些证据？</b></td>
+    <td>① 真实 LLM 态配置后执行 L4 Judge 断言 + 校准（≥90%/κ≥0.6）；
+        ② 启动服务跑 E2E HTTP 层（含 DOCX 一致性、冷跑、限流）；
+        ③ PM 指定 holdout 名单并执行一次性验证；
+        ④ 裁决 OPEN-E02/E03/C-01 解锁 3 个 BLOCKED + 备源连通性证据；
+        ⑤ 产品补齐 REQ-003 方案A 条件2/3（业绩预告源、成交异常阈值 OPEN-E09）；
+        ⑥ 全部 AC 映射用例 PASS 后，由 PM 按 release-acceptance 流程做放行裁决</td></tr>
+</table>
+
+<div class="foot">
+状态声明：本报告全部数据来自真实执行（测试日志 logs/bugfix_*.log、复跑 run_20261018T050132Z），
+可由 README 六条命令确定性复现。未修改任何产品文件与业务规则，未变更评测阻断标准，
+未将任何断言标为 optional，未宣称产品放行。
+</div>
+
+</div>
+</body>
+</html>

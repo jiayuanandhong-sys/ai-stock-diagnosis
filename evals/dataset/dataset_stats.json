@@ -1,0 +1,19 @@
+{
+ "total_cases": 41,
+ "by_split_dev": 27,
+ "by_split_regression": 10,
+ "by_split_holdout": 4,
+ "by_risk_P0": 17,
+ "by_risk_P1": 22,
+ "by_risk_P2": 2,
+ "blocked": 8,
+ "risk_reclassification_note": "v0.2→v0.3：E2E-002 P0→P1（断言级标记，修正#5）；L6-037 P2→P1（REQ-003 已批准需求不降级，修正#3）。",
+ "pm_decisions": {
+  "date": "2026-10-18",
+  "OPEN-E01": "百分位公式定案为 rank/N（平均并列名次/N×100），truth_lib/peg_checker 已切换同口径",
+  "OPEN-E08": "REQ-003 提前复核实现形态定案为方案A（运行时自动判断）；L6-037 解锁，条件1 可测，条件2/3 记录产品实现缺口（新开 OPEN-E09）",
+  "OPEN-E09": "成交结构异常定案：近5日平均成交量 > 2 × 近20日平均成交量（严格大于；两窗口均以最新交易日为端点，20日窗含最近5日）",
+  "REQ-003_C2": "条件2 定向：系统自动获取股票公告/财报发布时间（cninfo），检测到窗口内业绩预告/定期财报披露 → 提醒提前复核；产品已补齐 announcement_source（拉取+缓存+可注入），网络态冒烟 600768 实测通过",
+  "risk_classification": "分级 v0.3 批准（P0/P1/P2 体系与各级含义），本数据集当前 P0/P1/P2 计数即为批准口径下的实际分布"
+ }
+}

@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI量化个股诊断 MVP · Evals 评测体系设计 v0.2（第二轮质量审查修订版）</title>
+<style>
+  :root{--ink:#1f2733;--ink2:#5a6572;--line:#dfe4ea;--bg:#fff;--soft:#f6f8fa;
+    --blue:#2563eb;--blue-bg:#eff6ff;--green:#15803d;--green-bg:#f0fdf4;--green-line:#bbf7d0;
+    --amber:#b45309;--amber-bg:#fffbeb;--amber-line:#fde68a;--red:#b91c1c;--red-bg:#fef2f2;--red-line:#fecaca;
+    --violet:#6d28d9;--violet-bg:#f5f3ff;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:"Segoe UI","Microsoft YaHei",-apple-system,"PingFang SC",sans-serif;color:var(--ink);background:var(--bg);font-size:13px;line-height:1.6;}
+  .page{max-width:1000px;margin:0 auto;padding:34px 40px 48px;}
+  h1{font-size:21px;margin-bottom:4px;letter-spacing:.5px;}
+  .sub{color:var(--ink2);font-size:12px;margin-bottom:18px;}
+  h2{font-size:15px;margin:26px 0 10px;padding-left:9px;border-left:4px solid var(--blue);letter-spacing:.3px;}
+  h3{font-size:13px;margin:13px 0 6px;}
+  p{margin:5px 0;} ul,ol{margin:5px 0 5px 20px;} li{margin:2.5px 0;}
+  table{width:100%;border-collapse:collapse;margin:7px 0 4px;font-size:11.8px;}
+  th{background:var(--soft);text-align:left;padding:5px 7px;border:1px solid var(--line);font-weight:600;white-space:nowrap;}
+  td{padding:4.5px 7px;border:1px solid var(--line);vertical-align:top;}
+  tr:nth-child(even) td{background:#fbfcfd;}
+  .tag{display:inline-block;padding:0 7px;border-radius:10px;font-size:11px;font-weight:600;white-space:nowrap;line-height:1.55;}
+  .p0{background:var(--red-bg);color:var(--red);border:1px solid var(--red-line);}
+  .p1{background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-line);}
+  .p2{background:var(--soft);color:var(--ink2);border:1px solid var(--line);}
+  .t-ok{background:var(--green-bg);color:var(--green);border:1px solid var(--green-line);}
+  .t-red{background:var(--red-bg);color:var(--red);border:1px solid var(--red-line);}
+  .t-amb{background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-line);}
+  .t-gry{background:var(--soft);color:var(--ink2);border:1px solid var(--line);}
+  .t-vio{background:var(--violet-bg);color:var(--violet);border:1px solid #ddd6fe;}
+  .t-blue{background:var(--blue-bg);color:var(--blue);border:1px solid #bfdbfe;}
+  .note{background:var(--blue-bg);border-left:4px solid var(--blue);border-radius:0 6px 6px 0;padding:7px 11px;margin:9px 0;font-size:12px;}
+  .warn{background:var(--amber-bg);border-left:4px solid #d97706;border-radius:0 6px 6px 0;padding:7px 11px;margin:9px 0;font-size:12px;}
+  pre{background:#0f172a;color:#e2e8f0;border-radius:6px;padding:12px 14px;font-size:10.6px;line-height:1.55;overflow-x:auto;margin:8px 0;font-family:Consolas,"Courier New",monospace;white-space:pre;}
+  code{background:var(--soft);border:1px solid var(--line);border-radius:3px;padding:0 4px;font-size:11.5px;font-family:Consolas,monospace;}
+  .label{font-weight:700;font-size:11px;padding:1px 7px;border-radius:4px;margin-right:6px;white-space:nowrap;}
+  .lb-course{background:#dcfce7;color:#166534;} .lb-ai{background:#e0e7ff;color:#3730a3;}
+  .course{border:1px solid var(--line);border-radius:8px;padding:9px 13px;margin:9px 0;font-size:12px;background:#fcfcfd;}
+  .foot{margin-top:28px;padding-top:11px;border-top:1px solid var(--line);font-size:11px;color:var(--ink2);line-height:1.7;}
+  .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:8px 0;}
+  .stat{background:var(--soft);border:1px solid var(--line);border-radius:6px;padding:6px 10px;font-size:11.5px;}
+  .stat b{font-size:15px;display:block;}
+  .del{color:#b91c1c;text-decoration:line-through;text-decoration-thickness:1px;} .ins{color:#15803d;font-weight:600;}
+  @media print{body{font-size:11.5px;}.page{padding:8mm;max-width:none;}pre{font-size:9px;}.note,.warn,.course{break-inside:avoid;}tr{break-inside:avoid;}}
+</style>
+</head>
+<body>
+<div class="page">
+
+<h1>AI 量化个股诊断 MVP · Evals 评测体系设计 v0.2</h1>
+<div class="sub">第二轮质量审查修订版 ｜ 2026-10-18 ｜ 前版：v0.1（2026-10-18 上午）｜ 修订原则：保留 v0.1 已正确的架构与案例，最小修订；本轮验证 Evals 本身的正确性与可执行性，未执行任何正式评测</div>
+
+<h2>0. 修订摘要与状态总览</h2>
+<div class="grid4">
+  <div class="stat"><b>7 项</b>已修复（数学×2、覆盖×1、假歧义×1、弱化Spec×1、来源层级×1、快照口径×1）</div>
+  <div class="stat"><b>12 项</b>待 PM 确认（含 1 项新开 OPEN-E08）</div>
+  <div class="stat"><b>3 项</b>缺证据（INPUT-001 原件、备源环境连通性、holdout 名单）</div>
+  <div class="stat"><b>整体未验证</b>设计与 PEG 检查均未实际运行，不声称任何通过率</div>
+</div>
+<table>
+  <tr><th style="width:52px">编号</th><th>问题</th><th style="width:90px">状态</th><th>处置</th></tr>
+  <tr><td>Q1</td><td>L3-010 并列名次数学错误（83.33 误写为 66.67）</td><td><span class="tag t-ok">已修复</span></td><td>§1.1 / §2.6</td></tr>
+  <tr><td>Q2</td><td>L4-017 四侧面均值与 18 因子分不一致</td><td><span class="tag t-ok">已修复</span></td><td>§1.1 / §2.6</td></tr>
+  <tr><td>Q3</td><td>其余案例输入/派生值/预期答案自洽复核（含股票代码证据对齐、演示池快照口径）</td><td><span class="tag t-ok">已复核·2处修订</span></td><td>§1.1-Q3</td></tr>
+  <tr><td>Q4</td><td>风险分级混淆"严重错误"与"验收必须通过"（P0=26 过宽）</td><td><span class="tag t-amb">已重分级·待PM批准</span></td><td>§1.2 / §2.8</td></tr>
+  <tr><td>Q5</td><td>OPEN-E05 属假歧义（BR-007 边界数学上已唯一确定）</td><td><span class="tag t-ok">已收口</span></td><td>§1.3 / §2.2</td></tr>
+  <tr><td>Q6</td><td>v0.1 对 OPEN-E04 的"静态文案"处置实质弱化 REQ-003</td><td><span class="tag t-ok">已纠正表述</span></td><td>§1.3 / §2.2</td></tr>
+  <tr><td>Q7</td><td>HTTP 状态码/错误文案/数据来源未区分 Spec 明文与实现约定</td><td><span class="tag t-ok">已修复</span></td><td>§1.3 / §2.3</td></tr>
+  <tr><td>Q8</td><td>T-10 四池各≥2只覆盖缺口（v0.1 中 500/1000/2000 各仅 1 只）</td><td><span class="tag t-ok">已修复</span></td><td>§1.3 / §2.5</td></tr>
+  <tr><td>Q9</td><td>缺评测集自身质量验收机制</td><td><span class="tag t-vio">新增 PEG（设计）</span></td><td>§2.9</td></tr>
+  <tr><td>Q10</td><td>Judge Rubric 缺数值容差/语义边界/无证据处置细则</td><td><span class="tag t-ok">已修订 v0.2</span></td><td>§2.7</td></tr>
+</table>
+
+<h2>1. 第二轮审查问题清单与修改前后对比</h2>
+
+<h3>1.1 数学一致性（Q1–Q3）</h3>
+<h4>Q1 · L3-010 平均并列名次计算错误【已修复】</h4>
+<p><b>错误确认：</b>用户指正属实。按暂拟公式 pct=(平均并列名次−1)/(N−1)×100：N=4，PE 升序平均并列名次 [1.5, 1.5, 3, 4] → pct = [16.67, 16.67, 66.67, 100]；F1 为低=有利因子，方向统一后因子分 = 100−pct = <b>[83.33, 83.33, 33.33, 0]</b>。</p>
+<table>
+  <tr><th style="width:130px">项</th><th>v0.1（错误）</th><th>v0.2（修正）</th></tr>
+  <tr><td>f1_score 预期值</td><td><span class="del">[66.67, 66.67, 33.33, 0]</span></td><td><span class="ins">[83.33, 83.33, 33.33, 0]</span></td></tr>
+  <tr><td>hand_check 推导</td><td><span class="del">"名次[1.5,1.5,3,4]→pct[33.33,…]"——名次 1.5 与 pct 33.33 自相矛盾（33.33 对应名次 2）</span></td><td><span class="ins">"名次[1.5,1.5,3,4]→pct[(1.5−1)/3, (1.5−1)/3, 2/3, 1]×100=[16.67,16.67,66.67,100]→F1=100−pct"</span></td></tr>
+  <tr><td>根因标注</td><td>—</td><td>OPEN-E01 公式未定案时手算混用两套口径（名次取了 2 而声明取 1.5）；该错误正是 PEG-3 数学一致性检查应拦截的类型（见 §2.9）</td></tr>
+</table>
+<h4>Q2 · L4-017 四侧面均值与因子分不一致【已修复】</h4>
+<p><b>错误确认：</b>属实。四侧面均值为拆解展示（BR-006），必须等于本侧面因子分的算术平均；v0.1 四个侧面全部对不上，且缺 S_raw（18 因子等权均值）字段。</p>
+<table>
+  <tr><th>项</th><th>v0.1（错误）</th><th>按 18 因子分复算</th><th>v0.2（修正）</th></tr>
+  <tr><td>估值均值（F1–F3）</td><td><span class="del">65.1</span></td><td>(66.7+61.2+55.0)/3 = <b>61.0</b></td><td><span class="ins">61.0</span></td></tr>
+  <tr><td>价格均值（F4–F10）</td><td><span class="del">78.3</span></td><td>(88.9+82.4+90.1+76.8+84.2+71.5+79.3)/7 = <b>81.9</b></td><td><span class="ins">81.9</span></td></tr>
+  <tr><td>交易均值（F11–F14）</td><td><span class="del">70.0</span></td><td>(68.0+63.4+57.8+65.2)/4 = <b>63.6</b></td><td><span class="ins">63.6</span></td></tr>
+  <tr><td>风险均值（F15–F18）</td><td><span class="del">35.6</span></td><td>(33.3+29.6+35.1+38.9)/4 = <b>34.2</b></td><td><span class="ins">34.2</span></td></tr>
+  <tr><td>S_raw（新增字段）</td><td>缺失</td><td>1147.4/18 = <b>63.7</b></td><td><span class="ins">63.7</span>（S=72.4 为两级排名后百分位，与 S_raw 并列给出，供 D1 比对）</td></tr>
+</table>
+<h4>Q3 · 其余案例自洽复核【已复核，2 处修订】</h4>
+<table>
+  <tr><th>案例</th><th>复核结论</th><th>修订</th></tr>
+  <tr><td>L5-032 复核日（09-30→10-14 国庆；10-16→10-23）</td><td>✅ 与 Gate V 实测一致</td><td>无</td></tr>
+  <tr><td>L3-012 着色边界（恰 60/恰 40/60.01/39.99）</td><td>✅ 构造值自洽</td><td>OPEN-E05 收口后由"待确认"改为"直接生效"（见 Q5）</td></tr>
+  <tr><td>L6-021 池外用例代码</td><td>⚠️ v0.1 仅引 Gate V（832566/600768），遗漏 T-10 官方口径</td><td><span class="ins">扩为 4 代码并集：T-10（830001 北交所、000000 非成分）+ Gate V（832566、600768），均标注证据来源</span></td></tr>
+  <tr><td>L6-020 无效变体</td><td>✅ 6 变体均有 Gate V 实测证据；12345/abc123 另有 T-10 证据</td><td>补 source_tier 标注（见 Q7）</td></tr>
+  <tr><td>E2E-001/002（603799/000858）</td><td>✅ 演示池内，Gate V 实测</td><td>无</td></tr>
+  <tr><td>E2E-003~005（500/1000/2000 池）</td><td>⚠️ v0.1 未指定代码且每池仅 1 只</td><td><span class="ins">对齐 T-10 官方清单各 2 只（Q8）；并新增运行态依赖标注：演示样本外的股票需 SDD_POOL_MODE=full + 预热（Gate V 未决 #1/#2），案例 data_snapshot 必须钉死 pool_mode</span></td></tr>
+  <tr><td>JSONL 示例 1 的演示池快照口径</td><td>⚠️ v0.1 写"20 只演示同池"，已被 CR-V-004 升级为分池样本</td><td><span class="ins">更正：沪深300 样本 21 只（含三环集团）+ 中证500 样本 20 只（含蓝色光标）；九号公司 689009 因数据源缺失暂不在样本（CR-V-004 遗留 OPEN）</span></td></tr>
+  <tr><td>L3-009/011/013、L2-006/007/008、L1-015、L4-016/018/019、L6-022/023、HO-033~036</td><td>✅ 输入/预期自洽（构造类不依赖外部数值；真实类引用证据一致）</td><td>无</td></tr>
+</table>
+
+<h3>1.2 风险分级重审（Q4）</h3>
+<p><b>v0.1 缺陷：</b>P0=26 把"业务验收必须通过"与"P0 严重错误"混为一谈（如缺一章、着色错、限流均标 P0），导致阻断阈值失真。</p>
+<table>
+  <tr><th style="width:70px">级别</th><th>定义</th><th>用户后果</th><th>评测处置</th><th style="width:80px">v0.1→v0.2</th></tr>
+  <tr><td><b>P0 严重错误</b><br>（红线级）</td><td>违反合规红线（BR-003 禁词/操作建议/预测化）、产生误导决策的<b>错误核心数字</b>（S/因子分口径错、未来数据泄漏）、隐私违规（AC-009）</td><td>用户可能基于错误分数或违规内容做出错误持仓决策；合规暴露；隐私泄露——不可逆或高代价</td><td>任一 FAIL → 整轮 NO-GO，不可被其他通过抵消；修复后必须全量回归</td><td><span class="tag p0">26 → 18</span></td></tr>
+  <tr><td><b>P1 验收必须</b><br>（功能正确级）</td><td>Spec AC 定义的验收项不达标：缺章、归属错、着色错、复核日错、错误路径失效、双形态不一致、H 窗口/数据管道缺陷</td><td>功能不可用或体验受损，分数本身正确；用户可自行发现异常，不被误导</td><td>试用放行前必须全部 PASS（Spec 效力）；失败不触发整轮 NO-GO，但阻断放行</td><td><span class="tag p1">10 → 20</span></td></tr>
+  <tr><td><b>P2 稳健性</b><br>（体验级）</td><td>限流、模板态文风基线、静态文案存在性、版式差异</td><td>体验瑕疵，不误导、不违规</td><td>记录跟踪，不阻断放行（除非 PM 另有裁决）</td><td><span class="tag p2">0 → 3</span></td></tr>
+</table>
+<div class="warn"><b>争议点如实列出（待 PM 裁决，不代答）：</b>① H（52 周窗口）算错归 P1 还是 P0——v0.2 归 P1（历史参考分，非当前决策核心数字），但若 PM 认为 H 误导同等严重可升 P0；② 着色错归 P1（数值仍可见）——若 PM 认为颜色是主要阅读通道可升 P0；③ 复核日错归 P1（不改变分数正确性）。<b>本分级为建议，未经 PM 批准不得视为正式标准；分级不改变"全部 AC 映射用例放行前必须 PASS"的 Spec 效力。</b></div>
+
+<h3>1.3 Spec 与 Evals 一致性（Q5–Q8）</h3>
+<h4>Q5 · OPEN-E05 假歧义【已收口撤销】</h4>
+<p>BR-007 原文"高于 60 红、低于 40 绿、40–60 中性（深灰）"在数学上已唯一确定边界：<b>&gt;60 红、&lt;40 绿、[40,60] 闭区间灰（恰 60、恰 40 均灰）</b>。v0.1 将其列为"歧义"是错误的（制造假歧义）。且 T-04 已有 TestBand 边界单测、Gate V 48 对着色核对零违规，实现与 Spec 一致。<b>处置：OPEN-E05 撤销，从待确认清单移除；L3-012 直接生效。</b></p>
+<h4>Q6 · OPEN-E04 弱化 REQ-003【已纠正表述，新开 OPEN-E08】</h4>
+<p>v0.1 建议"MVP 收敛为静态条件文案（弱断言）"——该建议实质是以评测设计变更 REQ-003 的语义（把条件触发降级为文案打印），违反"不擅自修改已批准 Spec"纪律。<b>纠正后的立场：</b></p>
+<ul>
+  <li>REQ-003 原文"周涨跌幅绝对值≥5%、业绩预告/财报、成交结构异常时<b>提示提前复核</b>"存在两种可读实现（<b>方案 A</b>：运行时判断三条件并在报告打印提前复核提示；<b>方案 B</b>：报告打印条件说明文案，不做运行时判断）——这是 <b>Spec 歧义（OPEN-E08）</b>，只能由 PM 裁决或走 CR，评测不得默认弱方案；</li>
+  <li>方案 A 另有<b>数据依赖缺口</b>：业绩预告/财报数据不在当前数据管道（行情+估值），成交结构异常无阈值定义——若 PM 选方案 A，需先补数据源与定义（可能触发 CR），评测按 PM 定案提供两套断言：A-断言（构造周涨跌幅≥5% 的股票，断言报告出现提前复核提示）与 B-断言（条件说明文案存在 + <b>同时</b>断言文案完整转述三条件，不得删减 REQ-003 要素）；</li>
+  <li>L6-037 状态：<b>BLOCKED（待 OPEN-E08 裁决）</b>，P2 仅指其对放行不阻断，不代表弱化测试本身。</li>
+</ul>
+<h4>Q7 · 来源层级三分类【已修复】</h4>
+<table>
+  <tr><th style="width:110px">层级</th><th>断言内容</th><th>来源</th><th>变更纪律</th></tr>
+  <tr><td rowspan="4"><b>Spec 明文</b><br>（需求效力）</td><td>"暂不支持 + 支持范围说明"文案要素；池外/无效不生成报告</td><td>AC-007/008、BR-009</td><td rowspan="4">断言随 Spec 版本；只能走 CR 变更</td></tr>
+  <tr><td>禁词语义红线（操作动词、不代表概率口径）</td><td>BR-003、AC-005</td></tr>
+  <tr><td>复核日 = 出分日 + 5 交易日</td><td>REQ-003、AC-006</td></tr>
+  <tr><td>载荷仅 code、零采集、S/H 口径、着色规则</td><td>AC-009/002/004、BR-006/007</td></tr>
+  <tr><td rowspan="4"><b>实现约定</b><br>（当前实现冻结）</td><td>HTTP 400（两错误路径）</td><td>T-08/Gate V 实测</td><td rowspan="4">作为回归断言冻结当前行为防漂移；实现若合理变更需同步更新评测集版本并留差异说明</td></tr>
+  <tr><td>错误文案"代码格式无效"</td><td>T-08/Gate V 实测</td></tr>
+  <tr><td>无效代码 6 变体清单（12345/abc123/1234567/1/中文/空）</td><td>Gate V 用例（12345/abc123 另有 T-10）</td></tr>
+  <tr><td>禁词表 11 词 + 必需文案 4 条（JSON 外置）</td><td>T-01 实现产物</td></tr>
+  <tr><td rowspan="3"><b>新增评测建议</b><br>（无 Spec 出处）</td><td>数值展示容差 ≤0.5（Judge D1）</td><td>本设计 §2.7</td><td rowspan="3">标注"建议·待 PM 批准"；批准前不用于放行判定</td></tr>
+  <tr><td>R10 未来泄漏 P0、R11 L4 红线 P0、G-A 放行门槛</td><td>本设计 §2.8</td></tr>
+  <tr><td>数据来源标签 real_authorized / synthetic / expert_curated</td><td>eval-dataset-design 契约</td></tr>
+</table>
+<h4>Q8 · T-10 四池覆盖缺口【已修复】</h4>
+<p>tasks.md T-10 DoD-1 要求"四池各 ≥2 只 + 603799 + 池外/无效各 ≥2"。v0.1 案例清单中 500/1000/2000 池各仅 1 只，<b>不满足 T-10</b>。v0.2 对齐 T-10 官方清单（evidence/T-10_AC回归与测试股清单_20261017.json 实读）：中证500 = 000009/000021，中证1000 = 000012/000028，中证2000 = 000011/000014；沪深300 = 603799 + 000858（演示池内，Gate V 实测）+ T-10 的 000001/000002（full 态）。新增 E2E-003b/004b/005b 三个案例（+3）。</p>
+
+<h2>2. 修订后完整设计 v0.2</h2>
+
+<h2>2.1 依据读取（较 v0.1 新增）</h2>
+<p>spec v1.3 / plan v0.6 / tasks v1.2 / Gate V 报告 / src 结构 / spike 存档（同 v0.1，全部实读）；<b>本轮新增实读</b>：evidence/T-10_AC回归与测试股清单_20261017.json（四池官方抽样、AC 矩阵实测口径、禁词 11+必需文案 4）。INPUT-001 原件仍缺（<span class="tag t-red">缺证据</span>），L5 权威参照维持 spec 转载 REQ-002 清单，待 PM 确认。Skills 3/3 已加载（同 v0.1）。本轮仍未执行任何评测、未修改任何项目文件。</p>
+
+<h2>2.2 冲突与口径歧义清单 v0.2</h2>
+<table>
+  <tr><th style="width:80px">编号</th><th>内容</th><th>状态（v0.1→v0.2）</th></tr>
+  <tr><td>C-01</td><td>数据源主备顺序：ADR-002"东财主源"vs T-02"新浪主源"</td><td><span class="tag t-amb">待 PM 裁决</span>（不变）；备源在正式部署环境的连通性同时标<span class="tag t-red">缺证据</span></td></tr>
+  <tr><td>C-02</td><td>BR-008 残留"分钟线待验证"文案与 NG-006 矛盾</td><td><span class="tag t-amb">待 PM 裁决</span>（不变，建议 CR 清理）</td></tr>
+  <tr><td>OPEN-E01</td><td>百分位精确公式未写死</td><td><span class="tag t-amb">待 PM 定案</span>（不变；Q1 的计算错误正是其风险的实证——定案前所有手算真值必须附 assumed_formula 字段，PEG-3 强制核对）</td></tr>
+  <tr><td>OPEN-E02</td><td>H 回算用静态池还是历史快照</td><td><span class="tag t-amb">待 PM 定案</span>（不变；L3-026 BLOCKED）</td></tr>
+  <tr><td>OPEN-E03</td><td>52 完成周定义 + 次新股 H 处理</td><td><span class="tag t-amb">待 PM 定案</span>（不变；L3-014 BLOCKED）</td></tr>
+  <tr><td><b>OPEN-E08</b></td><td><b>REQ-003 提前复核实现形态</b>（方案 A 运行时判断 / 方案 B 条件说明文案）+ 方案 A 的业绩预告数据源缺口</td><td><span class="tag t-vio">新开</span>（替代 v0.1 OPEN-E04 的错误处置；L6-037 BLOCKED；不得默认弱方案）</td></tr>
+  <tr><td>OPEN-E06</td><td>十分组划分口径</td><td><span class="tag t-amb">待 PM 定案</span>（不变；L3-025 依赖）</td></tr>
+  <tr><td>OPEN-E07</td><td>匿名因子明细 3 表版式 or 单表</td><td><span class="tag t-amb">待 PM 决策</span>（不变，Gate V 未决 #7）</td></tr>
+  <tr><td><s>OPEN-E04</s></td><td><s>提前复核可测性（v0.1 处置：收敛为静态弱断言）</s></td><td><span class="tag t-ok">已撤销</span>——该处置弱化 REQ-003，由 OPEN-E08 取代（Q6）</td></tr>
+  <tr><td><s>OPEN-E05</s></td><td><s>40/60 恰值归档歧义</s></td><td><span class="tag t-ok">已收口</span>——BR-007 数学上唯一确定：&gt;60 红、&lt;40 绿、[40,60] 闭区间灰；与 T-04 TestBand 单测、Gate V 48 对实测一致（Q5）</td></tr>
+</table>
+
+<h2>2.3 AC-001~011 覆盖矩阵 v0.2（更新：案例/分级/来源层级）</h2>
+<table>
+  <tr><th>AC</th><th>验收内容</th><th>评测层</th><th>评测器</th><th>覆盖案例（v0.2）</th><th>分级</th><th>真值来源 [层级]</th></tr>
+  <tr><td>AC-001</td><td>17 章节完整</td><td>L5</td><td>E2E+Det</td><td>E2E-001/002、HO-033</td><td class="p1">P1</td><td>REQ-002 清单 [Spec 明文]</td></tr>
+  <tr><td>AC-002</td><td>S/H 口径、四侧面不加权</td><td>L3</td><td>Det（独立复算+手算锚点）</td><td>L2-006/007、L3-009/010/011/013、HO-034</td><td class="p0">P0</td><td>独立 numpy 实现 + 手算 [评测真值，公式待 E01]</td></tr>
+  <tr><td>AC-003</td><td>四池归属与标注</td><td>L1/L3</td><td>Det</td><td>E2E-003a/b、004a/b、005a/b、L1-015</td><td class="p1">P1</td><td>池快照 [Spec 明文 BR-008]</td></tr>
+  <tr><td>AC-004</td><td>着色/十分组</td><td>L3/L5</td><td>Det</td><td>L3-012（已生效）、L3-025</td><td class="p1">P1</td><td>BR-007 [Spec 明文，E05 已收口]</td></tr>
+  <tr><td>AC-005</td><td>禁词零命中+口径文案</td><td>L6</td><td>Det（T-01）</td><td>E2E-001/002、L6-022、HO-033</td><td class="p0">P0</td><td>语义 [Spec 明文]；11 词表+4 文案 [实现约定]</td></tr>
+  <tr><td>AC-006</td><td>复核日+5 交易日</td><td>L5</td><td>Det</td><td>L5-032（跨节假日）</td><td class="p1">P1</td><td>REQ-003 [Spec 明文]</td></tr>
+  <tr><td>AC-007</td><td>无效代码拒绝</td><td>L6</td><td>E2E</td><td>L6-020（6 变体）、HO-036</td><td class="p1">P1</td><td>语义 [Spec 明文]；400/文案/变体 [实现约定]</td></tr>
+  <tr><td>AC-008</td><td>池外拒绝+范围文案</td><td>L6</td><td>E2E</td><td>L6-021（4 代码并集）</td><td class="p1">P1</td><td>BR-009 [Spec 明文]；4 代码清单 [实现约定·有证据]</td></tr>
+  <tr><td>AC-009</td><td>零采集</td><td>L6</td><td>E2E</td><td>L6-023</td><td class="p0">P0</td><td>AC-009/BR-004 [Spec 明文]</td></tr>
+  <tr><td>AC-010</td><td>边界文案基线</td><td>L5</td><td>Det</td><td>E2E-001/002</td><td class="p1">P1</td><td>AC-010 [Spec 明文]</td></tr>
+  <tr><td>AC-011</td><td>在线/下载一致</td><td>L5</td><td>E2E+Det</td><td>L5-031、E2E-002</td><td class="p1">P1</td><td>在线 HTML 基准；<b>比对口径统一为 Gate V 11 项</b>（T-10 三要素口径较弱，V-1 缺陷正是三要素比对漏掉的）</td></tr>
+  <tr><td colspan="7" style="background:#fbfcfd"><b>非 AC 纳入：</b>限流（E-10，P2，L6-038）｜L4 解读红线（BR-003，P0 建议，L4-016~019）｜未来泄漏（P0 建议，L2-008）｜提前复核（REQ-003，P2，L6-037 BLOCKED 待 OPEN-E08）｜模板态基线（ADR-003④，P2，L4-030）</td></tr>
+</table>
+
+<h2>2.4 六层评测架构（与 v0.1 一致，无结构性变更）</h2>
+<p>L1 数据质量（Det+故障注入）→ L2 因子计算（Det 参数化单测）→ L3 综合评分（Det 独立复算+手算锚点）→ L4 AI 解读（Judge+Det 前置+Human 校准）→ L5 报告完整性（Det 章节比对+docx 解包）→ L6 安全异常（E2E+注入式）。评测器纪律不变：<b>能 Deterministic 的绝不用 Judge</b>；Human 仅锚点复核、Judge 校准与争议裁决。</p>
+
+<h2>2.5 首批案例清单 v0.2（41 例：dev 27 / regression 10 / holdout 4；P0 18 / P1 20 / P2 3）</h2>
+<table>
+  <tr><th style="width:66px">case_id</th><th>层</th><th>场景要点（v0.2）</th><th>溯源</th><th>分级</th><th>split</th><th>评测器</th><th style="width:86px">v0.1→v0.2</th></tr>
+  <tr><td>E2E-001</td><td>L5/L6</td><td>主路径 603799：17 章节+着色对拍+<b>AC-005 全文扫描（P0 断言）</b>+边界文案</td><td>AC-001/004/005/010</td><td class="p0">P0</td><td>dev</td><td>E2E+Det</td><td>不变（分级依据细化）</td></tr>
+  <tr><td>E2E-002</td><td>L5</td><td>000858 删缓存冷跑（演示池内，Gate V 实测 6.5s）+ docx 比对</td><td>AC-001/011</td><td class="p0">P0</td><td>dev</td><td>E2E</td><td>不变</td></tr>
+  <tr><td>E2E-003a</td><td>L6/L3</td><td>中证500：000009（T-10/Gate V 双证据）</td><td>AC-003</td><td class="p1">P1</td><td>dev</td><td>E2E+Det</td><td>代码补全（原 E2E-003）</td></tr>
+  <tr><td>E2E-003b</td><td>L6/L3</td><td>中证500：000021（T-10 官方第二只）</td><td>AC-003</td><td class="p1">P1</td><td>dev</td><td>E2E+Det</td><td><b>新增</b>（T-10 覆盖修复）</td></tr>
+  <tr><td>E2E-004a</td><td>L6/L3</td><td>中证1000：000012</td><td>AC-003</td><td class="p1">P1</td><td>dev</td><td>E2E+Det</td><td>代码补全</td></tr>
+  <tr><td>E2E-004b</td><td>L6/L3</td><td>中证1000：000028</td><td>AC-003</td><td class="p1">P1</td><td>dev</td><td>E2E+Det</td><td><b>新增</b></td></tr>
+  <tr><td>E2E-005a</td><td>L6/L3</td><td>中证2000：000011</td><td>AC-003</td><td class="p1">P1</td><td>dev</td><td>E2E+Det</td><td>代码补全</td></tr>
+  <tr><td>E2E-005b</td><td>L6/L3</td><td>中证2000：000014</td><td>AC-003</td><td class="p1">P1</td><td>dev</td><td>E2E+Det</td><td><b>新增</b></td></tr>
+  <tr><td>L2-006</td><td>L2</td><td>F1–F18 参数化单测（18 子断言，构造 OHLCV/估值）</td><td>附表 A</td><td class="p0">P0</td><td>dev</td><td>Det</td><td>不变（归 P0：核心数字正确性）</td></tr>
+  <tr><td>L2-007</td><td>L2</td><td>方向统一：F1/F2/F3/F15–F18 反转、F4–F14 不反转</td><td>附表 A</td><td class="p0">P0</td><td>dev</td><td>Det</td><td>不变</td></tr>
+  <tr><td>L2-008</td><td>L1/L2</td><td>未来数据泄漏：as_of 后数据不入任何计算</td><td>BR-006 引申</td><td class="p0">P0</td><td>dev</td><td>Det</td><td>不变（P0 为建议级待批）</td></tr>
+  <tr><td>L3-009</td><td>L3</td><td>手算锚点：5 股微池（synthetic）双实现盲算</td><td>AC-002</td><td class="p0">P0</td><td>dev</td><td>Det+Human</td><td>不变</td></tr>
+  <tr><td>L3-010</td><td>L3</td><td>并列名次：tie 构造，<b>预期值修正为 83.33</b></td><td>BR-006</td><td class="p0">P0</td><td>dev</td><td>Det</td><td><b>数学修复（Q1）</b></td></tr>
+  <tr><td>L3-011</td><td>L3</td><td>缺失因子不填分不计权，S_raw=有效因子等权均值</td><td>BR-006</td><td class="p0">P0</td><td>dev</td><td>Det</td><td>不变</td></tr>
+  <tr><td>L3-012</td><td>L3/L5</td><td>着色边界：恰60/恰40/60.01/39.99 → <b>[40,60] 闭区间灰</b></td><td>AC-004</td><td class="p1">P1</td><td>dev</td><td>Det</td><td>E05 收口→直接生效；P0→P1</td></tr>
+  <tr><td>L3-013</td><td>L3/L4</td><td>S 高 H 低：数值正确 + 解读如实呈现背离</td><td>BR-006/003</td><td class="p0">P0</td><td>dev</td><td>Det+Judge</td><td>不变</td></tr>
+  <tr><td>L3-014</td><td>L3</td><td>次新股历史不足 52 周 H 处理</td><td>BR-006</td><td class="p1">P1</td><td>dev</td><td>Det</td><td>BLOCKED（OPEN-E03），不变</td></tr>
+  <tr><td>L1-015</td><td>L1</td><td>池快照完整性/哈希/日期戳/离线恢复</td><td>AC-003/BR-008</td><td class="p1">P1</td><td>dev</td><td>Det</td><td>不变</td></tr>
+  <tr><td>L4-016</td><td>L4</td><td>数值引用：全部数字 vs 结构化输入（容差规则见 Rubric v0.2）</td><td>BR-003</td><td class="p0">P0</td><td>dev</td><td>Det+Judge</td><td>断言引用容差规则更新</td></tr>
+  <tr><td>L4-017</td><td>L4</td><td>多空矛盾解释，<b>输入数据修复（均值/S_raw）</b></td><td>BR-003</td><td class="p0">P0</td><td>dev</td><td>Judge</td><td><b>数学修复（Q2）</b></td></tr>
+  <tr><td>L4-018</td><td>L4</td><td>编造检测（输入外事实性陈述）</td><td>BR-003</td><td class="p0">P0</td><td>dev</td><td>Judge</td><td>不变</td></tr>
+  <tr><td>L4-019</td><td>L4</td><td>概率化/预测表述（禁词表外语义变体）</td><td>BR-003</td><td class="p0">P0</td><td>dev</td><td>Det+Judge</td><td>不变</td></tr>
+  <tr><td>L6-020</td><td>L6</td><td>无效代码 6 变体 → 400 + "代码格式无效" + 不生成报告</td><td>AC-007</td><td class="p1">P1</td><td>dev</td><td>E2E</td><td>P0→P1；补 source_tier [实现约定]</td></tr>
+  <tr><td>L6-021</td><td>L6</td><td>池外拒绝 4 代码并集（830001/000000/832566/600768）</td><td>AC-008/BR-009</td><td class="p1">P1</td><td>dev</td><td>E2E</td><td>用例扩为 4 代码；P0→P1</td></tr>
+  <tr><td>L6-022</td><td>L6</td><td>LLM 硬门禁注入：禁词→重试 1 次→回退模板，最终必 PASS</td><td>AC-005/ADR-003④</td><td class="p0">P0</td><td>dev</td><td>E2E+Det</td><td>不变（合规红线通道失效=红线）</td></tr>
+  <tr><td>L6-023</td><td>L6</td><td>零采集：载荷/无 Cookie/页面无采集</td><td>AC-009/BR-004</td><td class="p0">P0</td><td>dev</td><td>E2E</td><td>不变（隐私红线）</td></tr>
+  <tr><td>L6-037</td><td>L5/L6</td><td>提前复核：断言方案 A/B 双套（不弱化 REQ-003）</td><td>REQ-003</td><td class="p2">P2</td><td>dev</td><td>Det</td><td><b>重设（Q6）</b>；BLOCKED 待 OPEN-E08</td></tr>
+  <tr><td>L3-024</td><td>L3</td><td>跨周窗口边界（周一/周五/节后首日）</td><td>BR-006</td><td class="p1">P1</td><td>reg</td><td>Det</td><td>不变；归级争议点待 PM</td></tr>
+  <tr><td>L3-025</td><td>L3</td><td>十分组边界</td><td>AC-004</td><td class="p1">P1</td><td>reg</td><td>Det</td><td>BLOCKED（OPEN-E06）</td></tr>
+  <tr><td>L3-026</td><td>L3</td><td>调池股历史归属（500→300 真实案例）</td><td>BR-008</td><td class="p1">P1</td><td>reg</td><td>Det</td><td>BLOCKED（OPEN-E02）</td></tr>
+  <tr><td>L2-027</td><td>L2</td><td>极端值（涨跌停/零成交/长期停牌）：不崩溃、缺失走不填分</td><td>附表 A</td><td class="p1">P1</td><td>reg</td><td>Det</td><td>不变</td></tr>
+  <tr><td>L1-028</td><td>L1</td><td>主备源切换故障注入 + 切换后因子一致性</td><td>ADR-002</td><td class="p1">P1</td><td>reg</td><td>Det</td><td>BLOCKED（C-01 主备顺序）</td></tr>
+  <tr><td>L1-029</td><td>L1</td><td>缓存命中 0 外网 + 过期数据拒用：<b>显式标注态=P1；冒充当日数据=P0 升级规则</b></td><td>T-02 DoD/NG-001</td><td class="p1">P1</td><td>reg</td><td>Det</td><td>补双态分级规则</td></tr>
+  <tr><td>L4-030</td><td>L4</td><td>模板兜底态解读质量基线</td><td>ADR-003④</td><td class="p2">P2</td><td>reg</td><td>Judge+Human</td><td>不变</td></tr>
+  <tr><td>L5-031</td><td>L5</td><td>在线/docx 一致：<b>统一 Gate V 11 项比对口径</b></td><td>AC-011</td><td class="p1">P1</td><td>reg</td><td>E2E+Det</td><td>比对口径强化；P0→P1</td></tr>
+  <tr><td>L5-032</td><td>L5</td><td>复核日跨节假日（09-30→10-14；10-16→10-23）</td><td>AC-006</td><td class="p1">P1</td><td>reg</td><td>Det</td><td>P0→P1（争议点待 PM）</td></tr>
+  <tr><td>L6-038</td><td>L6</td><td>限流：429 超限/并发不崩/跨日重置/IP 隔离</td><td>E-10 DoD</td><td class="p2">P2</td><td>reg</td><td>E2E</td><td><b>新增</b>（E-10 覆盖正式化）</td></tr>
+  <tr><td>HO-033</td><td>L5/L6</td><td>holdout 主路径（PM 指定池内股，开发未接触）</td><td>AC-001~005</td><td class="p0">P0</td><td>holdout</td><td>E2E+Det</td><td>不变</td></tr>
+  <tr><td>HO-034</td><td>L3</td><td>holdout 独立复算对拍（双实现盲算）</td><td>AC-002</td><td class="p0">P0</td><td>holdout</td><td>Det</td><td>不变</td></tr>
+  <tr><td>HO-035</td><td>L4</td><td>holdout 真实 LLM 解读抽检（校准首轮 P0 案例全量人评）</td><td>BR-003</td><td class="p0">P0</td><td>holdout</td><td>Judge+Human</td><td>复核机制升级（§2.7）</td></tr>
+  <tr><td>HO-036</td><td>L6</td><td>holdout 错误路径新变体（PM 指定）</td><td>AC-007/008</td><td class="p1">P1</td><td>holdout</td><td>E2E</td><td>不变</td></tr>
+</table>
+<div class="note"><b>split 纪律不变：</b>dev 调参 / regression 冻结只增不改 / holdout 一次验证不反馈开发。synthetic 案例显式标注。<b>新增运行态纪律：</b>每案例 data_snapshot 必须钉死 pool_mode（demo/full）；演示样本外股票（如 000012/000028/000011/000014 等）需 full 模式并完成全池预热（Gate V 未决 #1/#2），否则标 BLOCKED 而非 FAIL。</div>
+
+<h2>2.6 JSONL 示例 ×3（修订版，字段契约同 v0.1）</h2>
+<h3>示例 1 · L6-020 无效代码（分级与来源层级更新）</h3>
+<pre>{"case_id":"L6-020","requirement_id":["AC-007","SCN-002"],"layer":"L6","risk_level":"P1","split":"dev","input":{"endpoint":"/diagnose","http_method":"POST","payload":{"code":"12345"},"variants":["12345","abc123","1234567","1","中文字",""]},"as_of_date":null,"data_snapshot":{"pool_mode":"demo","pool_snapshot_id":"pool_demo_crv004_20261017","pool_note":"分池演示样本：沪深300样本21只(含三环集团)+中证500样本20只(含蓝色光标)，CR-V-004；九号公司689009暂缺(CR-V-004遗留OPEN)","data_cache":"runtime"},"expected_output":{"http_status":400,"error_keyword":"代码格式无效","report_generated":false},"assertions":[{"type":"exact","field":"http_status","op":"==","value":400,"source_tier":"implementation_convention"},{"type":"contains","field":"response_body","value":"代码格式无效","source_tier":"implementation_convention"},{"type":"exact","field":"report_generated","op":"==","value":false,"source_tier":"spec"},{"type":"semantic","field":"response_body","check":"明确错误提示且不生成报告","source_tier":"spec"}],"evaluator_type":"E2E","pass_criteria":"6 变体全部断言通过","failure_reason":"","source":"real_authorized","truth_origin":"AC-007 语义 [Spec 明文]；400/文案/变体清单 [实现约定，Gate V+T-10 实测冻结]"}</pre>
+<h3>示例 2 · L3-010 并列名次（数学修复后）</h3>
+<pre>{"case_id":"L3-010","requirement_id":["BR-006","AC-002"],"layer":"L3","risk_level":"P0","split":"dev","input":{"pool":"synthetic_hs300_micro","universe":[{"code":"SYN0001","f1_raw":10,"f4_to_f18_raw":"见 data_snapshot.frozen_matrix[0]"},{"code":"SYN0002","f1_raw":10,"f4_to_f18_raw":"见 data_snapshot.frozen_matrix[1]"},{"code":"SYN0003","f1_raw":20,"f4_to_f18_raw":"见 data_snapshot.frozen_matrix[2]"},{"code":"SYN0004","f1_raw":40,"f4_to_f18_raw":"见 data_snapshot.frozen_matrix[3]"}]},"as_of_date":"2026-10-16","data_snapshot":{"snapshot_id":"syn_tie_l3_20261018_v2","type":"synthetic","frozen":true,"frozen_matrix_ref":"golden/l3/syn_tie_l3_v2.parquet","assumed_formula":"平均并列名次 pct=(avg_rank-1)/(N-1)*100；F1低=有利，方向统一后因子分=100-pct","formula_status":"OPEN-E01 待 PM 定案，定案不同则按新公式重算全部手算值"},"expected_output":{"f1_score":{"SYN0001":83.33,"SYN0002":83.33,"SYN0003":33.33,"SYN0004":0.0},"tie_rule":"并列组名次取平均(1.5)","hand_check":"N=4，PE升序平均并列名次[1.5,1.5,3,4]→pct=[(1.5-1)/3,(1.5-1)/3,(3-1)/3,(4-1)/3]×100=[16.67,16.67,66.67,100]→F1=100-pct=[83.33,83.33,33.33,0]"},"assertions":[{"type":"equality","target":"score_f1[SYN0001] == score_f1[SYN0002]","tolerance":0.0001},{"type":"independent_recompute","impl":"numpy_avg_rank_blind","expect_max_diff":0.0},{"type":"hand_check_match","impl":"expected_output.hand_check"}],"evaluator_type":"Deterministic","pass_criteria":"并列同分成立；引擎与独立实现逐分差=0；与手算锚点一致","failure_reason":"","source":"synthetic","truth_origin":"手工计算+独立 numpy 双算；v0.1 预期值 66.67 系名次误用为 2 所致，已修复并纳入 PEG-3 回归样本"}</pre>
+<h3>示例 3 · L4-017 多空矛盾解释（输入数据修复后）</h3>
+<pre>{"case_id":"L4-017","requirement_id":["BR-003","BR-002","ADR-003-4"],"layer":"L4","risk_level":"P0","split":"dev","input":{"structured_factors":{"code":"SYN6038","S_raw":63.7,"S":72.4,"H":31.2,"side_means":{"valuation":61.0,"price":81.9,"trading":63.6,"risk":34.2},"factor_scores":{"F1":66.7,"F2":61.2,"F3":55.0,"F4":88.9,"F5":82.4,"F6":90.1,"F7":76.8,"F8":84.2,"F9":71.5,"F10":79.3,"F11":68.0,"F12":63.4,"F13":57.8,"F14":65.2,"F15":33.3,"F16":29.6,"F17":35.1,"F18":38.9},"peg3_note":"side_means 已按 factor_scores 复算修正(61.0/81.9/63.6/34.2)；S_raw=18因子等权均值=1147.4/18=63.7"},"interpretation_text":"&lt;运行时由被测解读接口生成，评测时注入&gt;","generator_mode":"llm|template"},"as_of_date":"2026-10-16","data_snapshot":{"snapshot_id":"syn_divergence_l4_20261018_v2","type":"synthetic","frozen":true},"expected_output":{"required_behaviors":["数值引用与 structured_factors 一致（容差规则见 rubric-l4-v0.2 D1）","显式解释价格侧偏强与风险侧偏弱的并存状态及各自驱动因子","保留『分数不代表概率/涨跌预期』边界语义"],"forbidden_behaviors":["输入之外的事实性陈述","概率化或涨跌预测表述","操作建议动词或语义变体"]},"assertions":[{"type":"deterministic_precheck","check":"numeric_extraction_match","against":"structured_factors","tolerance_rule":"rubric-l4-v0.2 D1"},{"type":"deterministic_precheck","check":"forbidden_phrase_scan","impl":"compliance.T01"},{"type":"peg3_selfcheck","check":"side_means==factor_scores 按侧面复算 且 S_raw==18因子等权均值"},{"type":"llm_judge","rubric_version":"rubric-l4-v0.2","dimensions":["D1","D2","D3","D4","D5","D6","D7"],"insufficient_evidence_policy":"证据不足返回 INSUFFICIENT_EVIDENCE，禁止猜测判分"}],"evaluator_type":"LLM_Judge+Deterministic","pass_criteria":"D1–D7 全 PASS；D1/D4/D5/D6 任一 FAIL 即整体 FAIL；Det 前置或 PEG-3 自检 FAIL 直接整体 FAIL","failure_reason":"","source":"synthetic","truth_origin":"structured_factors 即真值载体；评分规则 rubric-l4-v0.2（待 PM 批准）"}</pre>
+
+<h2>2.7 LLM Judge Rubric v0.2（较 v0.1 新增：容差/边界/无证据/复核）</h2>
+<table>
+  <tr><th style="width:78px">新增项</th><th>规则（v0.2）</th><th>降低误判的作用</th></tr>
+  <tr><td><b>数值容差</b>（D1）</td><td>①整数分数/百分位（S/H/侧面均值/因子分）：|显示值−真值| ≤ 0.5 视为一致（四舍五入语义：72.4→"72 分"或"72.4"均 PASS，"75 左右" FAIL）；②名次/数量/日期：精确匹配；③禁止无依据模糊化（"约/大概/接近"+偏离>0.5 即 FAIL）；④数量级/截断失真一律 FAIL</td><td>消除"72 vs 72.4"类假阳性，同时堵住"75 左右"类真漏报</td></tr>
+  <tr><td><b>语义判定边界</b>（D5/D6）</td><td>D5 预测=指向<b>未来</b>收益方向/概率/目标位；描述当前相对位置或<b>历史</b>统计不算。临界例："近 20 日上涨天数占比高"→PASS（历史事实）；"涨势有望延续"→FAIL（未来方向）。D6 操作建议=引导仓位/买卖行为的祈使或暗示；"辅助判断的信息"→PASS；"当前位置可以适当布局"→FAIL</td><td>把"语义灰区"钉在可辩护的临界例上，减少 Judge 主观摇摆</td></tr>
+  <tr><td><b>无证据处置</b></td><td>INSUFFICIENT_EVIDENCE 的精确定义：Judge 无法在证据包中定位支持其判定的引用时必须返回，计为<b>未判定</b>（≠PASS，≠FAIL）；单维度未判定比例 &gt;10% 时该维度本轮不可用于放行判定，须补证据包或转人评</td><td>防止 Judge 用猜测填补证据缺口产生假 PASS/假 FAIL</td></tr>
+  <tr><td><b>人工复核机制</b></td><td>校准首轮：<b>P0 级 L4 案例全量人评</b> + 其余 30% 分层随机双盲；稳定后（单维度一致率 ≥90% 或 κ≥0.6）降为 30% 分层双盲。分歧案例由 PM 终裁并回写锚点例。Judge 配置冻结：模型 ID、Prompt 版本、温度=0、证据包哈希逐轮记录</td><td>以一致率门槛控制 Judge 误判外溢；P0 案例不依赖未校准 Judge</td></tr>
+</table>
+<p>D1–D7 维度定义与正反例锚点沿用 v0.1（D1 数值忠实 / D2 结论-证据一致 / D3 矛盾呈现 / D4 零编造 / D5 无预测 / D6 无操作建议 / D7 边界口径保留，P0 标记：D1/D4/D5/D6），此处不重复。</p>
+
+<h2>2.8 P0/P1/P2 分级 v0.2 与 P0 阻断规则（建议，待 PM 批准）</h2>
+<p>分级定义与用户后果见 §1.2。<b>R1–R9（从已批准 Spec/ADR 提取的既有规则）不变</b>，但按 v0.2 分级重标：R1/R2（禁词/门禁）=P0；R3（S/H 口径）=P0；R4（着色）=P1；R5（复核日）=P1；R6（错误路径）=P1；R7（零采集）=P0；R8（章节/边界文案）=P1；R9（双形态一致）=P1。<b>R10（未来泄漏）/R11（L4 红线）/G-A（放行门槛）维持建议级待批</b>。放行判定逻辑：Spec 效力不变——全部 AC 映射用例（P0+P1）PASS 方可放行；P0 与 P1 的差异在于失败处置（P0=整轮 NO-GO+全量回归，P1=修复后定向回归即可复审）。</p>
+
+<h2>2.9 评测集质量门 PEG（新增：Evals 自身验收机制）</h2>
+<table>
+  <tr><th style="width:70px">检查项</th><th>内容</th><th>方法</th><th>时机</th></tr>
+  <tr><td><b>PEG-1</b></td><td>JSONL Schema 校验：字段类型、枚举（layer/split/risk_level/source）、必填 13 字段</td><td>脚本（扩展 validate_dataset.py 或独立 peg_check.py）</td><td>每次数据集变更</td></tr>
+  <tr><td><b>PEG-2</b></td><td>字段完整性：prompt 契约 13 字段全覆盖、requirement_id 非空</td><td>同上脚本</td><td>同上</td></tr>
+  <tr><td><b>PEG-3</b></td><td>数学与逻辑一致性：<b>从 input 自动重算 expected</b>——side_means=侧面因子均值、S_raw=18 因子等权均值、pct 按 assumed_formula 复算、着色预期与 BR-007 一致、tie 预期与名次声明一致</td><td>脚本（独立复算器）；<b>本轮已对 3 个示例人工预演，逮住 Q1/Q2 两处错误（脚本本身未实现=未验证）</b></td><td>P1 基线冻结强制全过；v0.1 的 Q1/Q2 错误纳入 PEG-3 回归样本</td></tr>
+  <tr><td><b>PEG-4</b></td><td>标准答案独立性：truth_origin ∈ {手算, 独立实现, Spec 定义}；禁止引用被测系统输出为真值；独立实现与被测实现共享代码路径审查</td><td>脚本（truth_origin 白名单）+ 人工审查（共享路径）</td><td>P1 冻结时人工一次 + 脚本每轮</td></tr>
+  <tr><td><b>PEG-5</b></td><td>需求追溯与覆盖：每案例 requirement_id 存在于 spec；反向每 AC ≥1 案例；T-10 四池各≥2 只核对；split/P0/P1/P2 统计边车一致</td><td>脚本 + stats 边车核对</td><td>每次变更</td></tr>
+  <tr><td><b>PEG-6</b></td><td>冻结数据与引用存在性：snapshot_id/frozen_matrix_ref 对应文件存在且哈希匹配；evidence 引用路径存在</td><td>脚本（文件+哈希）</td><td>P1 冻结 + 每轮评测前</td></tr>
+</table>
+<div class="note"><b>PEG 纪律：</b>PEG 任一项 FAIL → 数据集不得进入评测执行（P2/P3）；PEG 结果状态区分 PASS/FAIL/BLOCKED（依赖 OPEN 的案例计 BLOCKED，不计入失败也不计入通过）。<b>本轮声明：v0.2 文档中的 PEG-3 检查为人工预演（3 示例），脚本属 P2 阶段交付物，未实现、未运行。</b></div>
+
+<h2>2.10 执行计划 v0.2（P1 前插入 PEG 门）</h2>
+<table>
+  <tr><th style="width:96px">阶段</th><th>内容（较 v0.1 变化加粗）</th><th>退出条件</th></tr>
+  <tr><td>P0 设计确认</td><td>PM 裁决 §2.11 十二项（<b>新增：OPEN-E08 REQ-003 实现形态、风险分级 v0.2 批准</b>；OPEN-E05 已收口移除）</td><td>PM 批准记录</td></tr>
+  <tr><td>P1 基线冻结</td><td>数据快照冻结 + 41 案例真值定稿 + <b>PEG-1~6 全量执行（任一 FAIL 不得进入 P2）</b></td><td>golden dataset v1.0 + PEG 报告</td></tr>
+  <tr><td>P2 脚手架</td><td>评测 runner + Judge 证据包组装器 + <b>peg_check.py 脚本化（PEG-3 由人工预演转自动）</b> + 报告生成器</td><td>runner 一键复现</td></tr>
+  <tr><td>P3 首轮执行</td><td>dev+regression 全量（模板态；LLM 态待密钥）；<b>每轮评测前 PEG-6 复跑</b>；版本纪律字段同 v0.1</td><td>quality_evaluation_report v1</td></tr>
+  <tr><td>P4 校准与回归</td><td><b>校准首轮 P0 案例全量人评</b> + 30% 分层双盲（一致率 ≥90%/κ≥0.6）；Bad Case 修复回归（只增不改）</td><td>校准报告 + 前后对比</td></tr>
+  <tr><td>P5 holdout 与放行衔接</td><td>holdout 一次性执行 → release-acceptance Gate1→Gate2（不变）</td><td>release_decision_record 素材（advisory）</td></tr>
+</table>
+
+<h2>2.11 待 PM 确认事项 v0.2（12 项）</h2>
+<ol>
+  <li><b>C-01</b> 数据源主备顺序（ADR-002 vs T-02）；</li>
+  <li><b>C-02</b> BR-008 分钟线残留文案是否 CR 清理；</li>
+  <li><b>OPEN-E01</b> 百分位公式定案（建议 (平均名次−1)/(N−1)×100；Q1 错误为其风险实证）；</li>
+  <li><b>OPEN-E02</b> H 历史归属：静态池 or 历史快照（建议 MVP 静态池并注明）；</li>
+  <li><b>OPEN-E03</b> 52 完成周定义 + 次新股 H 处理（建议 ≥26 周计算并标注）；</li>
+  <li><b>OPEN-E08</b>（新开，取代原 E04）REQ-003 提前复核实现形态：方案 A 运行时判断（需补业绩预告数据源与"成交结构异常"定义，可能 CR）/ 方案 B 条件说明文案（断言须完整转述三条件）；</li>
+  <li><b>OPEN-E06</b> 十分组口径；</li>
+  <li><b>OPEN-E07</b> 匿名因子明细 3 表 or 单表；</li>
+  <li><b>风险分级 v0.2</b>（P0/P1/P2 定义与 18/20/3 归级；尤其 H 窗口/着色/复核日归 P1 的三个争议点）+ R10/R11/G-A 建议级规则；</li>
+  <li><b>INPUT-001 原件</b>提供 or 确认以 spec 转载为准（缺证据项）；</li>
+  <li><b>holdout 名单</b>（HO-033~036）+ <b>L4 评测态</b>（模板态先行 or 配置密钥后双态）；</li>
+  <li><b>演示池运行态</b>：E2E-003a~005b 需 full 模式 + 全池预热（小时级冷启动），或 PM 指定演示样本内的替代股（Gate V 未决 #1/#2 联动）。</li>
+</ol>
+
+<h2>3. 课程思维辅助（本轮新增 1 条；M20/M21 维持 v0.1 表述不变）</h2>
+<div class="course"><span class="label lb-course">【高老师建议·课程明确｜M16】</span><b>任何成果指标必须限定口径与范围。</b>
+<b>发现：</b>Q1 的 83.33 vs 66.67 之争，本质不是算术错误而是<b>口径未锁定</b>——名次取 1.5 还是 2、百分位分母 N 还是 N−1，两种口径各算各的都对，混用才出错。v0.1 正是在 OPEN-E01 未定案时混用了两套口径。
+<b>出处：</b>《知乎13期AI产品经理PDF合并1-10.pdf》，PDF 第 503 页（M16，提炼类型：案例推演）。
+<b>AI 应用建议：</b>已落实为三条纪律：①OPEN-E01 定案前所有手算真值必须附 <code>assumed_formula</code> 字段；②PEG-3 自动从 input 复算 expected，口径混用在数据集阶段即拦截；③Q1/Q2 错误样本永久保留为 PEG-3 回归用例。<i>（此为 AI 对本项目的应用，非高老师对本产品的评价）</i></div>
+
+<div class="foot">
+<b>状态与口径声明：</b>本轮为第二轮质量审查与最小修订，<b>仍未执行任何正式评测，无任何通过率数字</b>；PEG-3 对 3 个示例的检查为人工预演，脚本未实现（未验证）；风险分级 v0.2、R10/R11/G-A、数值容差规则均为建议级，未经 PM 批准不得用于放行判定；OPEN-E05 已按 BR-007 收口（无需确认），OPEN-E04 处置已纠正并由 OPEN-E08 取代；未修改任何 Spec/Plan/Tasks/代码。文中"Gate V/T-10 已 PASS"均为对既有证据文件的引用。<br>
+<b>修订痕迹：</b>v0.1 全文保留于同目录《AI量化个股诊断MVP_Evals评测体系设计_v0.1.html》；两版差异见本文 §1 对比表。<br>
+<b>方法论依据：</b>eval-dataset-design v1.0.1（真值独立性、来源标签、split 纪律、validate_dataset.py 扩展点）、ai-quality-evaluation（指标口径、状态区分、回归纪律）、release-acceptance v1.0.1（P0 优先于均值、advisory_only）；课程方法卡 M16（《知乎13期AI产品经理PDF合并1-10.pdf》第 503 页）、M20/M21（v0.1 已引，第 216/245 页）。<br>
+<b>免责：</b>本文档为评测体系设计，不构成对任何证券的评价或投资建议。
+</div>
+
+</div>
+</body>
+</html>

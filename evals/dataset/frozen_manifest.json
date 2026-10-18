@@ -1,0 +1,560 @@
+{
+ "manifest_version": "1.2",
+ "generated_at": "2026-10-18T05:15:55.509379+00:00",
+ "peg_checker_version": "1.1.0",
+ "valid": true,
+ "peg_phase1_test_log": "logs/phase1_peg_unit_tests.log",
+ "peg_report_overall": "PASS",
+ "corrections_applied": [
+  "#1 PEG 先于冻结（Phase 1 单测通过后才执行本校验）",
+  "#2/#7 expected 数值 raw+display 双精度",
+  "#3 L6-037 P2→P1",
+  "#4 L6-020 source=expert_curated",
+  "#5 E2E-002 断言级归级 P1",
+  "#6 schema v1.0 统一",
+  "#8 证据与脚本分离（见实施报告）"
+ ],
+ "pm_decisions_20261018": {
+  "date": "2026-10-18",
+  "OPEN-E01": "百分位公式定案为 rank/N（平均并列名次/N×100），truth_lib/peg_checker 已切换同口径",
+  "OPEN-E08": "REQ-003 提前复核实现形态定案为方案A（运行时自动判断）；L6-037 解锁，条件1 可测，条件2/3 记录产品实现缺口（新开 OPEN-E09）",
+  "OPEN-E09": "成交结构异常定案：近5日平均成交量 > 2 × 近20日平均成交量（严格大于；两窗口均以最新交易日为端点，20日窗含最近5日）",
+  "REQ-003_C2": "条件2 定向：系统自动获取股票公告/财报发布时间（cninfo），检测到窗口内业绩预告/定期财报披露 → 提醒提前复核；产品已补齐 announcement_source（拉取+缓存+可注入），网络态冒烟 600768 实测通过",
+  "risk_classification": "分级 v0.3 批准（P0/P1/P2 体系与各级含义），本数据集当前 P0/P1/P2 计数即为批准口径下的实际分布"
+ },
+ "cases": {
+  "L2-006": {
+   "split": "dev",
+   "risk_level": "P0",
+   "status": "FROZEN",
+   "sha256": "e340f1b349be62268c414da4ad985e6096b505c29639d27c87a73936079ec7eb",
+   "peg": {
+    "PEG-1": "PASS",
+    "PEG-2": "PASS",
+    "PEG-4": "PASS",
+    "PEG-6": "PASS",
+    "PEG-3": "PASS"
+   }
+  },
+  "L2-007": {
+   "split": "dev",
+   "risk_level": "P0",
+   "status": "FROZEN",
+   "sha256": "731ce7ffc6079166891706b16dd487c2f5e380c2357b53720b4683f271556bab",
+   "peg": {
+    "PEG-1": "PASS",
+    "PEG-2": "PASS",
+    "PEG-4": "PASS",
+    "PEG-6": "PASS",
+    "PEG-3": "PASS"
+   }
+  },
+  "L2-008": {
+   "split": "dev",
+   "risk_level": "P0",
+   "status": "FROZEN",
+   "sha256": "e2ad1055440b253febcf8683fb5053fe7b42775b86d890c474f9dd38b1ab8e39",
+   "peg": {
+    "PEG-1": "PASS",
+    "PEG-2": "PASS",
+    "PEG-4": "PASS",
+    "PEG-6": "PASS",
+    "PEG-3": "PASS"
+   }
+  },
+  "L3-009": {
+   "split": "dev",
+   "risk_level": "P0",
+   "status": "FROZEN",
+   "sha256": "9ff2108a506da7d81050ebfabb814eeaeb285dc0f354ffa56f8fb0a9f555cad7",
+   "peg": {
+    "PEG-1": "PASS",
+    "PEG-2": "PASS",
+    "PEG-4": "PASS",
+    "PEG-6": "PASS",
+    "PEG-3": "PASS"
+   }
+  },
+  "L3-010": {
+   "split": "dev",
+   "risk_level": "P0",
+   "status": "FROZEN",
+   "sha256": "a47e52b41d4dceb4a748009d5c8c62f3323c477490ad13c7fc681ecd3574704e",
+   "peg": {
+    "PEG-1": "PASS",
+    "PEG-2": "PASS",
+    "PEG-4": "PASS",
+    "PEG-6": "PASS",
+    "PEG-3": "PASS"
+   }
+  },
+  "L3-011": {
+   "split": "dev",
+   "risk_level": "P0",
+   "status": "FROZEN",
+   "sha256": "07920c71e2e69c7c77e9358a6f91dd3d703df730afd0a03374b627f66f3af956",
+   "peg": {
+    "PEG-1": "PASS",
+    "PEG-2": "PASS",
+    "PEG-4": "PASS",
+    "PEG-6": "PASS",
+    "PEG-3": "PASS"
+   }
+  },
+  "L3-012": {
+   "split": "dev",
+   "risk_level": "P1",
+   "status": "FROZEN",
+   "sha256": "26358b4b95f97f9ea0fbc232eb670fd1a791f80f448bcbac5ca87cf32b80f8d7",
+   "peg": {
+    "PEG-1": "PASS",
+    "PEG-2": "PASS",
+    "PEG-4": "PASS",
+    "PEG-6": "PASS",
+    "PEG-3": "PASS"
+   }
+  },
+  "L3-013": {
+   "split": "dev",
+   "risk_level": "P0",
+   "status": "FROZEN",
+   "sha256": "afe65a82dcf180777e15bb39c7ddbc6f839bad42b5db727b431e11800b6b60f5",
+   "peg": {
+    "PEG-1": "PASS",
+    "PEG-2": "PASS",
+    "PEG-4": "PASS",
+    "PEG-6": "PASS",
+    "PEG-3": "PASS"
+   }
+  },
+  "L3-014": {
+   "split": "dev",
+   "risk_level": "P1",
+   "status": "BLOCKED",
+   "sha256": "bdd8df3d2507dda40a58ba51eda302eac1c9be513653070333118f3f4f746626",
+   "peg": {
+    "PEG-1": "PASS",
+    "PEG-2": "PASS",
+    "PEG-4": "PASS",
+    "PEG-6": "PASS",
+    "PEG-3": "SKIP"
+   }
+  },
+  "L1-015": {
+   "split": "dev",
+   "risk_level": "P1",
+   "status": "FROZEN",
+   "sha256": "ec0af95aae6ba324c8a7e228dec65ba230aa7ed23f6dc36d2987a5484cc441c5",
+   "peg": {
+    "PEG-1": "PASS",
+    "PEG-2": "PASS",
+    "PEG-4": "PASS",
+    "PEG-6": "PASS",
+    "PEG-3": "NA"
+   }
+  },
+  "L4-016": {
+   "split": "dev",
+   "risk_level": "P0",
+   "status": "FROZEN",
+   "sha256": "47d3a5eda7b8968db936adcb5629502db3465359e1423b3931d8c63579e914fa",
+   "peg": {
+    "PEG-1": "PASS",
+    "PEG-2": "PASS",
+    "PEG-4": "PASS",
+    "PEG-6": "PASS",
+    "PEG-3": "PASS"
+   }
+  },
+  "L4-017": {
+   "split": "dev",
+   "risk_level": "P0",
+   "status": "FROZEN",
+   "sha256": "6ba1c0e01bfc372be8d7680e1d8cf877b8b8c22bd1f2b92caa01c679ee8c8320",
+   "peg": {
+    "PEG-1": "PASS",
+    "PEG-2": "PASS",
+    "PEG-4": "PASS",
+    "PEG-6": "PASS",
+    "PEG-3": "PASS"
+   }
+  },
+  "L4-018": {
+   "split": "dev",
+   "risk_level": "P0",
+   "status": "FROZEN",
+   "sha256": "72110b2768817bc5bbb2f18b059e1324711c35b4ad5fd31a56a300093ec8c473",
+   "peg": {
+    "PEG-1": "PASS",
+    "PEG-2": "PASS",
+    "PEG-4": "PASS",
+    "PEG-6": "PASS",
+    "PEG-3": "NA"
+   }
+  },
+  "L4-019": {
+   "split": "dev",
+   "risk_level": "P0",
+   "status": "FROZEN",
+   "sha256": "5d477e77b3228015a5f748288dcf93edf3554cabecbdc993d6d3543fedcf1deb",
+   "peg": {
+    "PEG-1": "PASS",
+    "PEG-2": "PASS",
+    "PEG-4": "PASS",
+    "PEG-6": "PASS",
+    "PEG-3": "NA"
+   }
+  },
+  "L6-020": {
+   "split": "dev",
+   "risk_level": "P1",
+   "status": "FROZEN",
+   "sha256": "ffc62ac64f861d5456589b6a6a475fcd4ae2a4f6f226bd97aa2f42b0953d16ad",
+   "peg": {
+    "PEG-1": "PASS",
+    "PEG-2": "PASS",
+    "PEG-4": "PASS",
+    "PEG-6": "PASS",
+    "PEG-3": "NA"
+   }
+  },
+  "L6-021": {
+   "split": "dev",
+   "risk_level": "P1",
+   "status": "FROZEN",
+   "sha256": "6f070c3b5693ecdd028dd0f6e21c959defbbd2cb1056314ee92e870e909429cc",
+   "peg": {
+    "PEG-1": "PASS",
+    "PEG-2": "PASS",
+    "PEG-4": "PASS",
+    "PEG-6": "PASS",
+    "PEG-3": "NA"
+   }
+  },
+  "L6-022": {
+   "split": "dev",
+   "risk_level": "P0",
+   "status": "FROZEN",
+   "sha256": "97b8a6896448e576b6a16b74f6cba42761165a3ec1948b9321159313ea5bcfb8",
+   "peg": {
+    "PEG-1": "PASS",
+    "PEG-2": "PASS",
+    "PEG-4": "PASS",
+    "PEG-6": "PASS",
+    "PEG-3": "NA"
+   }
+  },
+  "L6-023": {
+   "split": "dev",
+   "risk_level": "P0",
+   "status": "FROZEN",
+   "sha256": "a3b13296c09965193ff641e6d75554e3138fc1eb570bd0009a3958d32e0410bc",
+   "peg": {
+    "PEG-1": "PASS",
+    "PEG-2": "PASS",
+    "PEG-4": "PASS",
+    "PEG-6": "PASS",
+    "PEG-3": "NA"
+   }
+  },
+  "L6-037": {
+   "split": "dev",
+   "risk_level": "P1",
+   "status": "FROZEN",
+   "sha256": "46393e4a0c9a5fd8a07d97d6f6c3ba7030b2a7f6f142c2c0de797cd86ae1e6ca",
+   "peg": {
+    "PEG-1": "PASS",
+    "PEG-2": "PASS",
+    "PEG-4": "PASS",
+    "PEG-6": "PASS",
+    "PEG-3": "PASS"
+   }
+  },
+  "E2E-001": {
+   "split": "dev",
+   "risk_level": "P0",
+   "status": "FROZEN",
+   "sha256": "a77279944ba5c10afc45aebccc856780271dae04e0dfafdca45070474ea24cd4",
+   "peg": {
+    "PEG-1": "PASS",
+    "PEG-2": "PASS",
+    "PEG-4": "PASS",
+    "PEG-6": "PASS",
+    "PEG-3": "NA"
+   }
+  },
+  "E2E-002": {
+   "split": "dev",
+   "risk_level": "P1",
+   "status": "FROZEN",
+   "sha256": "623d25fa500776acab8d05bc431f0235b9cc1b70f13cd987fc72d84c4f02356b",
+   "peg": {
+    "PEG-1": "PASS",
+    "PEG-2": "PASS",
+    "PEG-4": "PASS",
+    "PEG-6": "PASS",
+    "PEG-3": "NA"
+   }
+  },
+  "E2E-003a": {
+   "split": "dev",
+   "risk_level": "P1",
+   "status": "FROZEN",
+   "sha256": "6fc93d01c1c4a250b46ed6c116e54053b6585a6082e65b7c106c858465c4402c",
+   "peg": {
+    "PEG-1": "PASS",
+    "PEG-2": "PASS",
+    "PEG-4": "PASS",
+    "PEG-6": "PASS",
+    "PEG-3": "NA"
+   }
+  },
+  "E2E-003b": {
+   "split": "dev",
+   "risk_level": "P1",
+   "status": "FROZEN",
+   "sha256": "a76da9578ac430f980e624b0f8f3f125c39cb0f72615de9a1dca8474ffdc5fec",
+   "peg": {
+    "PEG-1": "PASS",
+    "PEG-2": "PASS",
+    "PEG-4": "PASS",
+    "PEG-6": "PASS",
+    "PEG-3": "NA"
+   }
+  },
+  "E2E-004a": {
+   "split": "dev",
+   "risk_level": "P1",
+   "status": "FROZEN",
+   "sha256": "aef4d8dece30f9fd8667afa6c305af3fbcb8c758365956b241442334d45dc8ee",
+   "peg": {
+    "PEG-1": "PASS",
+    "PEG-2": "PASS",
+    "PEG-4": "PASS",
+    "PEG-6": "PASS",
+    "PEG-3": "NA"
+   }
+  },
+  "E2E-004b": {
+   "split": "dev",
+   "risk_level": "P1",
+   "status": "FROZEN",
+   "sha256": "a601ff8b7e263c6277594aaeb2a8f1bd1bc657c15041d11856addfed8f6d4a0b",
+   "peg": {
+    "PEG-1": "PASS",
+    "PEG-2": "PASS",
+    "PEG-4": "PASS",
+    "PEG-6": "PASS",
+    "PEG-3": "NA"
+   }
+  },
+  "E2E-005a": {
+   "split": "dev",
+   "risk_level": "P1",
+   "status": "FROZEN",
+   "sha256": "5173593b33a8687460012b495df872ddf4ba021e3822cc8c5723950a9665ffa8",
+   "peg": {
+    "PEG-1": "PASS",
+    "PEG-2": "PASS",
+    "PEG-4": "PASS",
+    "PEG-6": "PASS",
+    "PEG-3": "NA"
+   }
+  },
+  "E2E-005b": {
+   "split": "dev",
+   "risk_level": "P1",
+   "status": "FROZEN",
+   "sha256": "8b3dfab9591239ffa28161b39a5468459c1874d014a6ca639b6306cac4b2a177",
+   "peg": {
+    "PEG-1": "PASS",
+    "PEG-2": "PASS",
+    "PEG-4": "PASS",
+    "PEG-6": "PASS",
+    "PEG-3": "NA"
+   }
+  },
+  "L3-024": {
+   "split": "regression",
+   "risk_level": "P1",
+   "status": "FROZEN",
+   "sha256": "fe4236ac02ff0d58617d28f787f7a6e00e1dd018902359af6027e0b19b066db1",
+   "peg": {
+    "PEG-1": "PASS",
+    "PEG-2": "PASS",
+    "PEG-4": "PASS",
+    "PEG-6": "PASS",
+    "PEG-3": "NA"
+   }
+  },
+  "L3-025": {
+   "split": "regression",
+   "risk_level": "P1",
+   "status": "BLOCKED",
+   "sha256": "4f097b4561f0c8810cd64a220910cf1edcf3b52138e1170ba180d37fc8c625b5",
+   "peg": {
+    "PEG-1": "PASS",
+    "PEG-2": "PASS",
+    "PEG-4": "PASS",
+    "PEG-6": "PASS",
+    "PEG-3": "SKIP"
+   }
+  },
+  "L3-026": {
+   "split": "regression",
+   "risk_level": "P1",
+   "status": "BLOCKED",
+   "sha256": "07e2db2ac1e8c0a19dc722cc1bb8c7d011e27ff0ba1db80ca667dcfb1d953634",
+   "peg": {
+    "PEG-1": "PASS",
+    "PEG-2": "PASS",
+    "PEG-4": "PASS",
+    "PEG-6": "PASS",
+    "PEG-3": "SKIP"
+   }
+  },
+  "L2-027": {
+   "split": "regression",
+   "risk_level": "P1",
+   "status": "FROZEN",
+   "sha256": "dcc248bc7077824d499a4b781f5e28efe738fe524394124f0f14dc617f29e290",
+   "peg": {
+    "PEG-1": "PASS",
+    "PEG-2": "PASS",
+    "PEG-4": "PASS",
+    "PEG-6": "PASS",
+    "PEG-3": "NA"
+   }
+  },
+  "L1-028": {
+   "split": "regression",
+   "risk_level": "P1",
+   "status": "BLOCKED",
+   "sha256": "11c222efa0c1253dbee7303b42da32cbd930434e1c22e3e69612a685fbaceb3f",
+   "peg": {
+    "PEG-1": "PASS",
+    "PEG-2": "PASS",
+    "PEG-4": "PASS",
+    "PEG-6": "PASS",
+    "PEG-3": "SKIP"
+   }
+  },
+  "L1-029": {
+   "split": "regression",
+   "risk_level": "P1",
+   "status": "FROZEN",
+   "sha256": "421ad275a3b5d129d15dbb6a9ed7a27a46a64b3a51c9b25e2474cbf93077fcd9",
+   "peg": {
+    "PEG-1": "PASS",
+    "PEG-2": "PASS",
+    "PEG-4": "PASS",
+    "PEG-6": "PASS",
+    "PEG-3": "NA"
+   }
+  },
+  "L4-030": {
+   "split": "regression",
+   "risk_level": "P2",
+   "status": "FROZEN",
+   "sha256": "c82861c2ca28b93b1121caf7d2bc5ce4cac29611192ec7a7689135edf5a7ace7",
+   "peg": {
+    "PEG-1": "PASS",
+    "PEG-2": "PASS",
+    "PEG-4": "PASS",
+    "PEG-6": "PASS",
+    "PEG-3": "NA"
+   }
+  },
+  "L5-031": {
+   "split": "regression",
+   "risk_level": "P1",
+   "status": "FROZEN",
+   "sha256": "1f758ef115e43abc13fcb1f714c2ca6e94f51e816ea7a6be8dfa7081e302c899",
+   "peg": {
+    "PEG-1": "PASS",
+    "PEG-2": "PASS",
+    "PEG-4": "PASS",
+    "PEG-6": "PASS",
+    "PEG-3": "NA"
+   }
+  },
+  "L5-032": {
+   "split": "regression",
+   "risk_level": "P1",
+   "status": "FROZEN",
+   "sha256": "b59aa1f1ec06e76406c0e8041d6b9d0bcd0dc998c5c3cb125a256647c1c093f3",
+   "peg": {
+    "PEG-1": "PASS",
+    "PEG-2": "PASS",
+    "PEG-4": "PASS",
+    "PEG-6": "PASS",
+    "PEG-3": "NA"
+   }
+  },
+  "L6-038": {
+   "split": "regression",
+   "risk_level": "P2",
+   "status": "FROZEN",
+   "sha256": "002793ae4ff1463522c02da444d185a3c7717764664d7e07af5183146641292f",
+   "peg": {
+    "PEG-1": "PASS",
+    "PEG-2": "PASS",
+    "PEG-4": "PASS",
+    "PEG-6": "PASS",
+    "PEG-3": "NA"
+   }
+  },
+  "HO-033": {
+   "split": "holdout",
+   "risk_level": "P0",
+   "status": "BLOCKED",
+   "sha256": "cd7f7afe8449a1052159a8c5db3ec6233145bb9255762ac24c712d467ec8d7a2",
+   "peg": {
+    "PEG-1": "PASS",
+    "PEG-2": "PASS",
+    "PEG-4": "PASS",
+    "PEG-6": "PASS",
+    "PEG-3": "SKIP"
+   }
+  },
+  "HO-034": {
+   "split": "holdout",
+   "risk_level": "P0",
+   "status": "BLOCKED",
+   "sha256": "c669e53388c5887df380f4c0233f05f9f058c6ae8f6f2c0bc493cfd26b5fb624",
+   "peg": {
+    "PEG-1": "PASS",
+    "PEG-2": "PASS",
+    "PEG-4": "PASS",
+    "PEG-6": "PASS",
+    "PEG-3": "SKIP"
+   }
+  },
+  "HO-035": {
+   "split": "holdout",
+   "risk_level": "P0",
+   "status": "BLOCKED",
+   "sha256": "812753a3ad6701b608b625b430a1cbefba5cce9232ed2c20d2aaf710987df981",
+   "peg": {
+    "PEG-1": "PASS",
+    "PEG-2": "PASS",
+    "PEG-4": "PASS",
+    "PEG-6": "PASS",
+    "PEG-3": "SKIP"
+   }
+  },
+  "HO-036": {
+   "split": "holdout",
+   "risk_level": "P1",
+   "status": "BLOCKED",
+   "sha256": "7ee45a7babb42bcff9ee80883738fc2de2de7ffdd1c88b4fdf6d8d3e76ad1395",
+   "peg": {
+    "PEG-1": "PASS",
+    "PEG-2": "PASS",
+    "PEG-4": "PASS",
+    "PEG-6": "PASS",
+    "PEG-3": "SKIP"
+   }
+  }
+ }
+}

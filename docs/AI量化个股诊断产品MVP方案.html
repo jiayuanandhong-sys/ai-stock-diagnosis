@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 量化个股诊断产品 · MVP 范围决策方案</title>
+<style>
+  :root{
+    --ink:#1f2733; --ink2:#5a6572; --line:#dfe4ea; --bg:#ffffff; --soft:#f6f8fa;
+    --blue:#2563eb; --blue-bg:#eff6ff;
+    --green:#15803d; --green-bg:#f0fdf4; --green-line:#bbf7d0;
+    --amber:#b45309; --amber-bg:#fffbeb; --amber-line:#fde68a;
+    --red:#b91c1c; --red-bg:#fef2f2; --red-line:#fecaca;
+    --violet:#6d28d9; --violet-bg:#f5f3ff;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:"Segoe UI","Microsoft YaHei",-apple-system,"PingFang SC",sans-serif; color:var(--ink); background:var(--bg); font-size:13.5px; line-height:1.62;}
+  .page{max-width:960px; margin:0 auto; padding:36px 40px 48px;}
+  h1{font-size:22px; letter-spacing:.5px; margin-bottom:4px;}
+  .sub{color:var(--ink2); font-size:12.5px; margin-bottom:20px;}
+  h2{font-size:15.5px; margin:26px 0 10px; padding-left:9px; border-left:4px solid var(--blue); letter-spacing:.3px;}
+  h3{font-size:13.5px; margin:14px 0 6px;}
+  p{margin:6px 0;}
+  table{width:100%; border-collapse:collapse; margin:8px 0 4px; font-size:12.5px;}
+  th{background:var(--soft); text-align:left; padding:6px 8px; border:1px solid var(--line); font-weight:600; white-space:nowrap;}
+  td{padding:6px 8px; border:1px solid var(--line); vertical-align:top;}
+  tr:nth-child(even) td{background:#fbfcfd;}
+  .tag{display:inline-block; padding:1px 8px; border-radius:10px; font-size:11.5px; font-weight:600; white-space:nowrap; line-height:1.5;}
+  .t-do{background:var(--green-bg); color:var(--green); border:1px solid var(--green-line);}
+  .t-next{background:var(--amber-bg); color:var(--amber); border:1px solid var(--amber-line);}
+  .t-no{background:var(--red-bg); color:var(--red); border:1px solid var(--red-line);}
+  .t-kano{background:var(--violet-bg); color:var(--violet); border:1px solid #ddd6fe;}
+  .t-grey{background:var(--soft); color:var(--ink2); border:1px solid var(--line);}
+  .t-blue{background:var(--blue-bg); color:var(--blue); border:1px solid #bfdbfe;}
+  .meta{display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin:14px 0 4px;}
+  .meta div{background:var(--soft); border:1px solid var(--line); border-radius:6px; padding:7px 10px; font-size:12px;}
+  .meta b{display:block; font-size:11px; color:var(--ink2); font-weight:600; margin-bottom:1px;}
+  .verdict{display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin:12px 0 4px;}
+  .vcard{border-radius:8px; padding:11px 13px; font-size:12.5px;}
+  .vcard b{display:block; font-size:13.5px; margin-bottom:3px;}
+  .vc1{background:var(--green-bg); border:1.5px solid var(--green-line);} .vc1 b{color:var(--green);}
+  .vc2{background:var(--amber-bg); border:1.5px solid var(--amber-line);} .vc2 b{color:var(--amber);}
+  .vc3{background:var(--red-bg); border:1.5px solid var(--red-line);} .vc3 b{color:var(--red);}
+  .note{background:var(--blue-bg); border-left:4px solid var(--blue); border-radius:0 6px 6px 0; padding:8px 12px; margin:10px 0; font-size:12.5px;}
+  .warn{background:var(--amber-bg); border-left:4px solid #d97706; border-radius:0 6px 6px 0; padding:8px 12px; margin:10px 0; font-size:12.5px;}
+  ul,ol{margin:6px 0 6px 22px;}
+  li{margin:3px 0;}
+  .flow{display:flex; flex-wrap:wrap; align-items:stretch; gap:6px; margin:10px 0;}
+  .fstep{flex:1 1 0; min-width:120px; background:var(--soft); border:1px solid var(--line); border-radius:6px; padding:8px 10px; font-size:12px; position:relative;}
+  .fstep b{display:block; color:var(--blue); font-size:12px; margin-bottom:2px;}
+  .arrow{align-self:center; color:#94a3b8; font-weight:700;}
+  .src{font-size:11px; color:var(--ink2);}
+  .label{font-weight:700; font-size:11.5px; padding:1px 7px; border-radius:4px; margin-right:6px; white-space:nowrap;}
+  .lb-course{background:#dcfce7; color:#166534;}
+  .lb-ai{background:#e0e7ff; color:#3730a3;}
+  .course{border:1px solid var(--line); border-radius:8px; padding:10px 14px; margin:10px 0; font-size:12.5px; background:#fcfcfd;}
+  .foot{margin-top:30px; padding-top:12px; border-top:1px solid var(--line); font-size:11.5px; color:var(--ink2); line-height:1.7;}
+  @media print{ body{font-size:12px;} .page{padding:10mm 8mm; max-width:none;} .vcard,.note,.warn,.course{break-inside:avoid;} table{break-inside:auto;} tr{break-inside:avoid;} }
+</style>
+</head>
+<body>
+<div class="page">
+
+<h1>AI 量化个股诊断产品 · MVP 范围决策方案</h1>
+<div class="sub">决策日期：2026-10-17 ｜ 方案性质：MVP 第一版取舍建议（用户尚未批准，属决策草案） ｜ 依据：mvp-prioritization v1.1.2 方法论</div>
+
+<div class="meta">
+  <div><b>目标市场 / 辖区</b>中国大陆 A 股</div>
+  <div><b>资质路径</b>规划与持牌机构合作（未落地）</div>
+  <div><b>MVP 发布范围</b>自己 + 小范围熟人灰度</div>
+  <div><b>团队资源</b>单人 + AI 辅助开发</div>
+</div>
+
+<h2>〇、决策结论（一页看懂）</h2>
+<div class="verdict">
+  <div class="vcard vc1"><b>✅ 第一版做：技术指标解释</b>以「个股诊断报告」为核心交付物：规则层计算指标 → LLM 只做解释层。验证"散户是否需要看得懂的个股诊断"这一最关键假设，合规暴露最小，单人 4–6 周可闭环。</div>
+  <div class="vcard vc2"><b>⏭ 下一版做：自动选股</b>价值验证周期长（需等收益兑现）、"荐股"合规属性强、因子+回测工程量单人不可承受、同花顺/东财已做烂。V1 用「批量自选股诊断」替代性观察需求信号。</div>
+  <div class="vcard vc3"><b>⛔ 第一版不做：AI 投资建议</b>属决策型 AI + 证券投资咨询业务，被"持牌合作未落地"硬阻断。V1 以"诊断+解释+风险提示"逼近体验但不输出买卖建议；持牌合作与法务核验并行推进，作为 V2 依赖。</div>
+</div>
+
+<h2>一、候选功能对比</h2>
+<table>
+  <tr><th style="width:90px">功能</th><th style="width:150px">用户任务</th><th style="width:96px">Kano（均为 PM 假设）</th><th style="width:70px">档位</th><th>产品价值 / 证据</th><th>实现成本（单人）</th><th>主要风险</th></tr>
+  <tr>
+    <td><b>技术指标解释</b></td>
+    <td>散户拿到一只股票，看不懂 MACD/RSI/KDJ/量价/均线信号意味着什么，想要"看得懂的体检报告"</td>
+    <td><span class="tag t-kano">期望（假设）</span></td>
+    <td><span class="tag t-do">必须做</span></td>
+    <td>教育/信息属性，直接命中"个股诊断"题眼；LLM 擅长的解释层；竞品（同花顺 AI、东财妙想）证明需求存在但解读深度参差 <span class="src">（竞品认知为 PM 既有研究背景，未经本次系统核验）</span></td>
+    <td>低-中：数据接口 + 指标计算（规则，确定性）+ LLM 解释（模板约束），约 4–6 周闭环</td>
+    <td>幻觉（数值必须全部来自计算层）；解释质量需抽检评测</td>
+  </tr>
+  <tr>
+    <td><b>自动选股</b></td>
+    <td>用户不知道买什么，想让系统从全市场筛出候选</td>
+    <td><span class="tag t-kano">魅力（假设）</span></td>
+    <td><span class="tag t-next">后续做</span></td>
+    <td>表面吸引力高，但价值验证周期长——选股好坏需等收益兑现，MVP 阶段无法快速证伪；免费竞品已充分供给</td>
+    <td>高：因子库 + 回测框架 + 全市场数据质量工程，约 6–10 周；且验证周期以月计</td>
+    <td>"荐股"属性强于"解释"，公开输出合规风险上升；效果差直接砸品牌</td>
+  </tr>
+  <tr>
+    <td><b>AI 投资建议</b></td>
+    <td>用户想要"该不该买/卖/补仓/止损点位"</td>
+    <td><span class="tag t-grey">合规安全组，不进 Kano</span></td>
+    <td><span class="tag t-no">V1 不做（阻断）</span></td>
+    <td>付费意愿可能最强，但属证券投资咨询业务范畴，无资质公开提供即触红线；熟人灰度阶段也无需冒此险</td>
+    <td>开发本身 2–3 周，但被持牌合作协议（责任划分、输出署名、审核流程）阻断，周期不可控</td>
+    <td>决策型 AI 的幻觉与责任归属；监管处罚；合作方背书风险</td>
+  </tr>
+</table>
+<div class="note"><b>取舍逻辑：</b>MVP 要验证的最关键不确定性是"散户是否真的需要、并持续使用看得懂的个股诊断"（需求假设），而不是"我们的选股/建议准不准"（效果假设，验证周期长且当前无资质）。三个功能中只有「指标解释」能同时满足：验证速度最快 × 合规暴露最小 × 单人可实现。</div>
+
+<h2>二、Kano 假设（仅用户价值组；全部待验证）</h2>
+<table>
+  <tr><th>功能点</th><th>Kano 假设</th><th>验证方式（内测期）</th></tr>
+  <tr><td>自然语言个股诊断报告（核心指标解释）</td><td><span class="tag t-kano">期望</span> 无则减分</td><td>复用率 + 对照组（裸指标面板）偏好访谈</td></tr>
+  <tr><td>一键生成 / 图表可视化体检报告</td><td><span class="tag t-kano">魅力</span></td><td>内测反馈"惊喜点"提及率</td></tr>
+  <tr><td>批量自选股诊断（替代选股的观察位）</td><td><span class="tag t-kano">魅力</span></td><td>使用频次 + 是否被当作选股器使用</td></tr>
+  <tr><td>自动选股 / AI 买卖建议</td><td colspan="2"><span class="tag t-grey">不参与 Kano 评级：自动选股暂缓属资源与验证周期决策；AI 建议属合规阻断，用户投票不能解除（V1.1 硬规则）</span></td></tr>
+</table>
+
+<h2>三、合规与安全底线（四级分类）</h2>
+<h3>L-4 风险评估建议 —— V1 生效（通用安全实践，作为强制约束执行）</h3>
+<table>
+  <tr><th>底线项</th><th>实现方式</th><th>状态</th></tr>
+  <tr><td>免责声明</td><td>每份报告固定文案："本报告为指标数据解释与风险提示，不构成任何投资建议"</td><td><span class="tag t-blue">V1 必做</span></td></tr>
+  <tr><td>禁止指令性表述</td><td>Prompt 约束 + 输出正则过滤：拦截"买入/卖出/加仓/满仓/止损点位"类建议性话术</td><td><span class="tag t-blue">V1 必做</span></td></tr>
+  <tr><td>数据来源与生成时间标注</td><td>报告注明数据截止日期与数据源</td><td><span class="tag t-blue">V1 必做</span></td></tr>
+  <tr><td>全量留痕</td><td>输入、计算结果、模型输出、用户反馈全部落日志</td><td><span class="tag t-blue">V1 必做</span></td></tr>
+  <tr><td>异常兜底</td><td>数据缺失/API 失败 → 降级展示原始指标表 + "暂无法生成解释"</td><td><span class="tag t-blue">V1 必做</span></td></tr>
+  <tr><td>紧急停用条件</td><td>内测期间发现系统性错误输出 → 立即下线修复后重测</td><td><span class="tag t-blue">V1 必做</span></td></tr>
+</table>
+<h3>L-1 疑似法定要求 —— V2 公开发布/输出建议前必须法务核验（核验前一律不输出）</h3>
+<table>
+  <tr><th>事项</th><th>疑似依据</th><th>状态</th></tr>
+  <tr><td>证券投资咨询业务资格</td><td>《证券、期货投资咨询管理暂行办法》（1997，国务院证券委员会发布）：未取得资格从事证券投资咨询业务涉嫌违规</td><td><span class="tag t-no">条款号待法务核验，核验前按 L-4 处置</span></td></tr>
+  <tr><td>证券服务机构备案与行为规范</td><td>《证券法》（2019 年修订）：投资咨询相关备案要求及禁止行为（承诺收益、代客操作等）</td><td><span class="tag t-no">条款号待法务核验</span></td></tr>
+  <tr><td>数据源商用授权</td><td>akshare / Tushare 等免费数据接口的商用条款；通达信数据仅限个人使用范围</td><td><span class="tag t-no">公开/商业化前必须确认</span></td></tr>
+</table>
+<div class="warn"><b>说明（V6/V9 硬规则）：</b>以上法规名真实存在，但本方案未逐条核对条款号，故全部标注为"疑似法定、待法务核验"，不虚构条款细节。熟人灰度 + 教育/信息定位的 V1 输出，以 L-4 底线为强制约束即可；任何形式的"买卖建议"输出与公开发布，均以上述核验完成为前置条件。</div>
+
+<h2>四、MVP 范围界定（四档）</h2>
+<table>
+  <tr><th style="width:130px">档位</th><th>内容</th></tr>
+  <tr><td><span class="tag t-do">第一版必须做</span></td><td>
+    ① 个股诊断报告：输入代码 → 5–8 个核心指标（均线系统、MACD、RSI、KDJ、量价关系、换手率、估值摘要）<br>
+    ② LLM 自然语言解释层：严格引用规则层计算数值，逐指标解读 + 综合小结<br>
+    ③ 免责声明与风险提示（固定文案）<br>
+    ④ 反馈入口：有用 / 没用 / 纠错（每份报告级）<br>
+    ⑤ 异常兜底与留痕日志<br>
+    <b>合计 5 个功能点（课程经验参考值 4–6，非上限）</b></td></tr>
+  <tr><td><span class="tag t-next">公测/下一版应该做</span></td><td>批量自选股诊断（选股需求观察位）；报告结构迭代（依据内测反馈）；解释质量评测集系统化</td></tr>
+  <tr><td><span class="tag t-grey">后续可做</span></td><td>自动选股（H1 验证通过后）；与持牌机构合作下的合规建议输出（V2）</td></tr>
+  <tr><td><span class="tag t-no">明确不做 / 不允许</span></td><td>V1 输出任何买卖建议或点位（严格禁止自动执行）；实盘/模拟交易接口；多市场（港美股）；收益类、荐股类自动生成的社交媒体内容</td></tr>
+</table>
+
+<h2>五、最小用户闭环</h2>
+<div class="flow">
+  <div class="fstep"><b>1 输入</b>股票代码 / 名称（内测白名单用户）</div><div class="arrow">→</div>
+  <div class="fstep"><b>2 数据拉取</b>日线行情、量价、基础财务；数据校验</div><div class="arrow">→</div>
+  <div class="fstep"><b>3 规则层计算</b>指标数值与信号状态（确定性，不经 LLM）</div><div class="arrow">→</div>
+  <div class="fstep"><b>4 LLM 解释</b>结构化模板约束，只引用计算层数值，禁建议表述</div><div class="arrow">→</div>
+  <div class="fstep"><b>5 输出报告</b>诊断报告 + 免责声明 + 数据来源时间</div><div class="arrow">→</div>
+  <div class="fstep"><b>6 反馈回流</b>有用/没用/纠错 → 日志；纠错人工复核</div>
+</div>
+<p><b>失败与兜底：</b>数据缺失/接口异常 → 降级为原始指标表；模型 API 超时 → 重试一次后降级；解释与数值矛盾 → 以数值为准并标记待修复。<b>人工接管：</b>纠错反馈 48 小时内人工复核（内测期由本人承担）。</p>
+
+<h2>六、技术分工（规则 / LLM / 人工）</h2>
+<table>
+  <tr><th>层</th><th>职责</th><th>技术选型约束</th></tr>
+  <tr><td><b>规则层（确定性）</b></td><td>数据拉取与校验、全部指标计算、信号状态判定</td><td>禁止用 LLM 做任何数值计算；保证数值 100% 可复现</td></tr>
+  <tr><td><b>LLM 层（生成）</b></td><td>仅解释生成：把结构化数值翻译为散户语言</td><td>输入为结构化 JSON；系统提示词含禁止事项清单；输出正则过滤；模型选型按单次成本 × 解释质量约束评估</td></tr>
+  <tr><td><b>人工</b></td><td>纠错复核、评测抽检（30% 抽样）、内测运营</td><td>AI 可辅助评测打分，但通过/失败标准由人把关</td></tr>
+</table>
+
+<h2>七、验证标准（显式样本口径）</h2>
+<table>
+  <tr><th>假设</th><th>验证动作</th><th>通过标准</th><th>样本与口径</th><th>失败后</th></tr>
+  <tr>
+    <td><b>H1 需求</b>：散户需要"看得懂的个股诊断"并持续使用</td>
+    <td>10–20 人熟人内测，2 周真实使用</td>
+    <td>≥50% 用户复用 ≥3 次，且 ≥30% 主动推荐他人</td>
+    <td>内测用户全量；复用以留痕日志为准</td>
+    <td>回到定位：访谈诊断是"不需要"还是"报告结构不对"，必要时重新定义目标用户</td>
+  </tr>
+  <tr>
+    <td><b>H2 质量</b>：解释层事实准确</td>
+    <td>构建评测集 + 30% 随机抽样人工复核</td>
+    <td>指标数值错误 = 0（计算层单测）；解释事实性错误率 &lt;5%（在 30 条人工复核样本下）；指令性话术出现 0 次（在 N=100 条生成样本下）</td>
+    <td>N=100 只随机股票生成样本；30% 抽样人工复核；<b>零违规为样本观察，不等于全量零风险</b></td>
+    <td>加严模板约束 / 更换模型 / 缩小解释范围后重测；仍失败则砍掉 LLM 层，仅保留规则信号</td>
+  </tr>
+  <tr>
+    <td><b>H3 决策影响</b>：诊断改变用户对个股的理解</td>
+    <td>内测结束访谈</td>
+    <td>≥30% 用户能举出"看完报告改变判断/操作前必看"的具体例子</td>
+    <td>访谈定性证据，不做百分比外推</td>
+    <td>调整报告信息结构（可能用户要的不是指标解释而是结论先行）</td>
+  </tr>
+</table>
+<div class="note"><b>口径声明：</b>上述百分比门槛为 PM 设定值（非行业基线），H1/H3 无历史基线可参照，属"待基线确认后可修订"的占位。评测集的系统化构建建议后续走 eval-dataset-design 流程（本次未调用，列为待办）。</div>
+
+<h2>八、阶段路线（候选排期，未确认）</h2>
+<table>
+  <tr><th>阶段</th><th>范围</th><th>进入条件</th></tr>
+  <tr><td><b>V1 · 熟人灰度</b></td><td>本方案第四节"必须做"5 项</td><td>无阻断（数据接口跑通即可开工）</td></tr>
+  <tr><td><b>V1.5 · 内测迭代</b></td><td>批量自选股诊断、报告结构迭代、评测集系统化</td><td>H1 通过</td></tr>
+  <tr><td><b>V2 · 公开 / 建议能力</b></td><td>自动选股（差异化定位待竞品系统分析）、持牌合作下合规建议输出</td><td><b>三重阻断依赖：</b>① 持牌机构合作协议落地（责任划分与署名机制）② L-1 法务核验完成 ③ 数据源商用授权确认</td></tr>
+</table>
+
+<h2>九、关键风险与待用户确认</h2>
+<ul>
+  <li><b>数据源风险：</b>免费接口（akshare 等）稳定性与商用条款均未确认，V1 用作灰度可接受，V2 前必须解决。</li>
+  <li><b>竞品压力：</b>同花顺 AI、东方财富妙想已提供免费的 AI 解读与选股，差异化必须想清楚（候选方向：诊断深度、多空逻辑透明、无广告干扰、散户语言），建议后续走 competitor-analysis 流程系统核验。</li>
+  <li><b>持牌合作节奏：</b>谈判与法务核验建议与 V1 开发并行启动，否则 V2 时间表完全被动。</li>
+  <li><b>需用户确认的决定：</b>① 是否接受"AI 投资建议"整体移出 V1；② H1–H3 门槛数值是否认可；③ 内测人群名单（10–20 人）与周期（2 周）；④ 持牌合作目标机构是否已有意向对象。</li>
+</ul>
+
+<h2>课程思维辅助（旁路补充，3 条）</h2>
+
+<div class="course"><span class="label lb-course">【高老师建议·课程明确｜M31】</span><b>区分生成型与决策型 AI。</b>
+<b>发现：</b>三个候选功能横跨两种 AI 形态：指标解释是"生成内容"，投资建议是"对行动选择的判断"——后者对准确性、可解释性和责任的要求完全不同。
+<b>出处：</b>《知乎13期AI产品经理PDF合并31-40.pdf》，PDF 第 339 页（M31，提炼类型：直接）。
+<b>AI 应用建议：</b>V1 把 LLM 严格限定在生成解释层，一切决策性判断（信号状态）由规则层给出并标注计算依据，为将来接入持牌建议能力留出清晰的责任边界。<i>（此建议为 AI 对当前项目的应用，非高老师对本产品的评价）</i></div>
+
+<div class="course"><span class="label lb-course">【高老师建议·课程明确｜M10】</span><b>从供给侧转向需求侧思维。</b>
+<b>发现：</b>"自动选股"吸引力大，但部分属于"我们能做所以想做"的供给侧冲动；散户的未满足需求究竟是"帮我选"还是"帮我看懂"，目前只是 PM 假设。
+<b>出处：</b>《知乎13期产品经理基本功PDF合并.pdf》，PDF 第 324 页（M10，提炼类型：直接）。
+<b>AI 应用建议：</b>内测访谈第一问设计为："你最近一次看某只股票的指标时，具体卡在哪一步？"用真实回答校准 V1.5 方向，而不是直接堆选股功能。</div>
+
+<div class="course"><span class="label lb-ai">【高老师课程启发·AI归纳｜X03，支撑 M33】</span><b>对方案保持替代路径意识。</b>
+<b>发现：</b>"自动选股"的第一版替代验证路径已内置：批量自选股诊断可以低成本观察用户是否自发把它当选股器用。
+<b>支撑出处：</b>M33"发现痛点→Demo→验证→规模化"，《知乎13期AI产品经理PDF合并31-40.pdf》，PDF 第 502 页（提炼类型：案例推演；X03 为跨章节归纳）。
+<b>AI 应用建议：</b>V1.5 上线批量诊断后，把"用户主动询问能否按条件筛选全市场"的频次作为选股需求强度的领先指标。</div>
+
+<div class="foot">
+<b>证据与口径说明：</b>本方案中功能价值判断基于用户给定的三个候选功能与已确认的四项约束（辖区/资质/范围/资源），无外部新采集数据；竞品对比为 PM 既有研究背景，未经本次系统核验；所有百分比门槛为 PM 设定占位值；所有 Kano 分类为"待验证的 PM 假设"。法规名真实存在但条款号未经核验，相关项均标"疑似法定、待法务确认"。<br>
+<b>方法论依据：</b>mvp-prioritization v1.1.2（Kano 与合规分离、V6 四级分类、样本口径显式化）；课程方法卡 M31/M10/M33 出自 pm-thinking-companion 知识库（41 方法卡 + 6 跨章节归纳，经用户确认保留）。<br>
+<b>免责：</b>本方案为产品管理决策草案，不构成对任何证券的评价或投资建议。
+</div>
+
+</div>
+</body>
+</html>

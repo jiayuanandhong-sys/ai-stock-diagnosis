@@ -1,0 +1,41 @@
+{
+  "steps": {
+    "输入页（唯一字段/无JS/无Cookie）": {
+      "pass": true,
+      "detail": "HTTP 200；含代码表单: True；script 标签: False；Set-Cookie: False；免责口径在位: True"
+    },
+    "主路径 603799 在线报告（17 章节完整）": {
+      "pass": true,
+      "detail": "HTTP 200；缺章: 无；同池标注: 演示同池（沪深300 样本 20 只）（20 只有效样本）"
+    },
+    "当日产物复用": {
+      "pass": true,
+      "detail": "HTTP 200（缓存复用，无需重算）"
+    },
+    "docx 下载可打开且内容一致（AC-011）": {
+      "pass": true,
+      "detail": "HTTP 200；大小 182 KB；段落数 44；标题/结论/边界三要素与在线版一致: True"
+    },
+    "AC-009 零采集核对": {
+      "pass": true,
+      "detail": "请求仅 code 字段；响应无 Cookie；输入页无登录/注册/手机号/密码等采集元素"
+    },
+    "SCN-002 无效代码 → 明确提示不生成报告": {
+      "pass": true,
+      "detail": "HTTP 400；提示: '格式无效' in 响应"
+    },
+    "SCN-003 池外 A 股 → 暂不支持+支持范围": {
+      "pass": true,
+      "detail": "HTTP 400；含支持范围提示: True"
+    },
+    "demo 模式范围提示（诚实标注）": {
+      "pass": true,
+      "detail": "HTTP 400；提示演示支持列表: True"
+    },
+    "服务端渲染·无 JS 核心内容可读": {
+      "pass": true,
+      "detail": "script 标签: False；纯文本长度 3253 字符"
+    }
+  },
+  "overall": "ALL PASS"
+}

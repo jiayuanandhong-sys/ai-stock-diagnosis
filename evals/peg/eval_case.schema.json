@@ -1,0 +1,145 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AI量化个股诊断MVP · 评测案例 Schema v1.1",
+  "description": "统一契约：13 必填字段 + 状态机 + 断言级风险标记 + truth_origin 结构化 + 来源四级标签（v1.1 新增 pm_decision：PM 裁决作为真值权威来源，如 OPEN-E01/E08/E09 定案）。PEG-1 按本 Schema 执行结构校验；本文件为契约权威版本。",
+  "type": "object",
+  "required": [
+    "case_id", "requirement_id", "layer", "risk_level", "split",
+    "input", "as_of_date", "data_snapshot", "expected_output",
+    "assertions", "evaluator_type", "pass_criteria", "failure_reason", "status"
+  ],
+  "properties": {
+    "case_id": {
+      "type": "string",
+      "pattern": "^(E2E|L[1-6]|HO)-[0-9]+[a-z]?$",
+      "description": "E2E-xxx / L1-L6-xxx / HO-xxx，可带小写后缀（如 E2E-003a）"
+    },
+    "requirement_id": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "pattern": "^(REQ|BR|AC|ADR|SCN|NG|E)-[0-9]+(-[0-9]+)?$|^附表A$"
+      },
+      "description": "来源范围：REQ/BR/AC/ADR/SCN/NG/附表A ← spec.md v1.3；E-xx ← tasks.md。PEG-5 逐项回查存在性。"
+    },
+    "layer": {
+      "enum": ["L1", "L2", "L3", "L4", "L5", "L6"],
+      "description": "主评测层（单值）；其余层放 secondary_layers"
+    },
+    "secondary_layers": {
+      "type": "array",
+      "items": { "enum": ["L1", "L2", "L3", "L4", "L5", "L6"] }
+    },
+    "risk_level": {
+      "enum": ["P0", "P1", "P2"],
+      "description": "案例级 = 全部断言 risk_level 的最大值（PEG-2 强制核对一致性）。分级标准本身为建议级，待 PM 批准。"
+    },
+    "split": {
+      "enum": ["dev", "regression", "holdout"],
+      "description": "dev 调参 / regression 冻结只增不改 / holdout 一次性验证不反馈开发"
+    },
+    "input": { "type": "object" },
+    "as_of_date": {
+      "type": ["string", "null"],
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "data_snapshot": {
+      "type": "object",
+      "required": ["snapshot_id", "type", "frozen"],
+      "properties": {
+        "snapshot_id": { "type": "string", "minLength": 1 },
+        "type": { "enum": ["synthetic", "real_cached", "real_authorized", "runtime"] },
+        "frozen": { "type": "boolean" },
+        "refs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["path"],
+            "properties": {
+              "path": { "type": "string" },
+              "sha256": { "type": "string" },
+              "note": { "type": "string" }
+            }
+          },
+          "description": "PEG-6 校验存在性与哈希"
+        },
+        "note": { "type": "string" }
+      }
+    },
+    "expected_output": { "type": "object" },
+    "assertions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["type", "risk_level"],
+        "properties": {
+          "type": { "type": "string", "minLength": 1 },
+          "risk_level": { "enum": ["P0", "P1", "P2"] },
+          "source_tier": {
+            "enum": ["spec", "implementation_convention", "eval_suggestion", "pm_decision"],
+            "description": "Spec 明文 / 实现约定冻结 / 新增评测建议 / PM 裁决定案（v1.1，如 OPEN-E09 阈值）"
+          },
+          "field": { "type": "string" },
+          "op": { "type": "string" },
+          "value": {},
+          "tolerance": { "type": "number" },
+          "check": { "type": "string" },
+          "note": { "type": "string" }
+        }
+      }
+    },
+    "evaluator_type": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "enum": ["Deterministic", "E2E", "LLM_Judge", "Human"] }
+    },
+    "pass_criteria": { "type": "string", "minLength": 1 },
+    "failure_reason": { "type": "string" },
+    "source": {
+      "enum": ["synthetic", "expert_curated", "real_cached", "real_authorized"],
+      "description": "synthetic=人工构造｜expert_curated=专家整理负例/边界集（有实测证据支撑）｜real_cached=公开渠道真实数据本地缓存（未签商用授权）｜real_authorized=已授权真实数据"
+    },
+    "truth_origin": {
+      "type": "object",
+      "required": ["method", "detail"],
+      "properties": {
+        "method": {
+          "enum": [
+            "hand_computed",
+            "independent_implementation",
+            "spec_definition",
+            "implementation_convention_frozen",
+            "evidence_frozen",
+            "pending_pm_decision"
+          ]
+        },
+        "detail": { "type": "string", "minLength": 1 },
+        "evidence_refs": { "type": "array", "items": { "type": "string" } }
+      },
+      "description": "标准答案独立性（PEG-4）：禁止以被测系统输出为真值；BLOCKED 案例用 pending_pm_decision"
+    },
+    "status": {
+      "enum": ["DRAFT", "FROZEN", "BLOCKED"],
+      "description": "DRAFT=构建中；FROZEN=已过 PEG 并入冻结清单；BLOCKED=存在未决口径，不得伪造预期答案"
+    },
+    "blocked_reason": { "type": "string" },
+    "formula_status": {
+      "type": "string",
+      "description": "如 OPEN-E01：真值所依赖公式未定案时必须声明"
+    },
+    "peg3_checks": {
+      "type": "array",
+      "items": { "type": "object" },
+      "description": "PEG-3 机器可读自检描述符，见 peg_checker.py 的 check 类型库"
+    },
+    "notes": { "type": "string" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "status": { "const": "BLOCKED" } } },
+      "then": { "required": ["blocked_reason"] }
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "steps": {
+    "数据拉取": {
+      "pass": true,
+      "detail": "成功 20/20 只；日线来源 {'sina': 20}；失败: 无",
+      "t": 46.6
+    },
+    "18 项因子原始值计算": {
+      "pass": true,
+      "detail": "矩阵 (20, 18)；因子有效样本 20–20（缺失不填分，BR-006）",
+      "t": 46.6
+    },
+    "同池百分位与 S 合成": {
+      "pass": true,
+      "detail": "目标 603799: S_raw=33.6, S=10.0, 同池排名 19/20",
+      "t": 46.7
+    },
+    "H 历史位置（简化口径）": {
+      "pass": true,
+      "detail": "52 周窗口样本 53 周；当前 H=20",
+      "t": 46.7
+    },
+    "复核日计算": {
+      "pass": true,
+      "detail": "出分日 2026-10-16，建议复核日 2026-10-23",
+      "t": 46.8
+    },
+    "图表渲染（4 张，BR-007 三色着色）": {
+      "pass": true,
+      "detail": "matplotlib -> PNG 完成",
+      "t": 47.4
+    },
+    "合规关键词扫描（AC-005 预演）": {
+      "pass": true,
+      "detail": "禁词命中: 无；边界文案在位: 是",
+      "t": 47.4
+    },
+    "HTML 在线版输出": {
+      "pass": true,
+      "detail": "C:\\Users\\28309\\WorkBuddy\\2026-10-17-14-16-08\\sdd-stock-diagnosis\\spikes\\spike2\\out\\华友钴业_603799_Spike2演示报告_简要版.html",
+      "t": 47.4
+    },
+    "docx 文件版输出": {
+      "pass": true,
+      "detail": "C:\\Users\\28309\\WorkBuddy\\2026-10-17-14-16-08\\sdd-stock-diagnosis\\spikes\\spike2\\out\\华友钴业_603799_Spike2演示报告_简要版.docx",
+      "t": 47.5
+    }
+  },
+  "notes": [],
+  "elapsed": 47.5,
+  "S_target": 10.0,
+  "H_simplified": 20.0,
+  "pool_ok": "20/20",
+  "artifacts": [
+    "C:\\Users\\28309\\WorkBuddy\\2026-10-17-14-16-08\\sdd-stock-diagnosis\\spikes\\spike2\\out\\华友钴业_603799_Spike2演示报告_简要版.html",
+    "C:\\Users\\28309\\WorkBuddy\\2026-10-17-14-16-08\\sdd-stock-diagnosis\\spikes\\spike2\\out\\华友钴业_603799_Spike2演示报告_简要版.docx"
+  ],
+  "all_pass": true
+}

@@ -1,0 +1,14 @@
+test_603799_resolves_hs300 (test_pool_manager.TestPoolManager.test_603799_resolves_hs300) ... ok
+test_bse_code_rejected (test_pool_manager.TestPoolManager.test_bse_code_rejected) ... ok
+test_invalid_format (test_pool_manager.TestPoolManager.test_invalid_format) ... ok
+test_nonmember_microcap_rejected (test_pool_manager.TestPoolManager.test_nonmember_microcap_rejected) ... ok
+test_one_member_each_pool (test_pool_manager.TestPoolManager.test_one_member_each_pool) ... ok
+test_pool_members_api (test_pool_manager.TestPoolManager.test_pool_members_api) ... ok
+test_priority_higher_pool_wins (test_pool_manager.TestPoolManager.test_priority_higher_pool_wins)
+同代码若出现在多池名单（理论不应发生），高级别池优先。 ... ok
+test_snapshot_persisted_and_offline_load (test_pool_manager.TestPoolManager.test_snapshot_persisted_and_offline_load) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 1.541s
+
+OK

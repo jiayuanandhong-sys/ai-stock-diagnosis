@@ -1,0 +1,11 @@
+# AI 量化个股诊断 MVP —— 依赖清单（版本与开发验证环境逐一锁定）
+# Python 版本要求：3.11+（在 3.13.12 验证通过）
+fastapi==0.143.3
+uvicorn==0.54.0
+akshare==1.18.64          # 行情与四池名单数据源（接口漂移敏感，务必锁版本）
+pandas==3.0.3
+numpy==2.4.6
+matplotlib==3.10.9         # 报告图表
+python-docx==1.2.0        # docx 报告生成
+httpx==0.28.1             # 测试期 HTTP 客户端
+pyarrow==26.0.0           # 日线面板 parquet 缓存

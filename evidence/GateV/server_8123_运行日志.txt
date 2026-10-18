@@ -1,0 +1,24 @@
+INFO:     Started server process [28656]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8123 (Press CTRL+C to quit)
+INFO:     127.0.0.1:4797 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:4801 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:4803 - "GET /diagnose?code=300408 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:4832 - "GET /diagnose?code=300058 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:5093 - "GET /diagnose?code=300058 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:5102 - "GET /diagnose?code=689009 HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:5104 - "GET /diagnose?code=689009 HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:5106 - "GET /diagnose?code=600000 HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:5108 - "GET /diagnose?code=600000 HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:5111 - "GET /diagnose?code=830799 HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:5114 - "GET /diagnose?code=830799 HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:5119 - "GET /download?code=300058 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:5129 - "GET /diagnose?code=689009 HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:5131 - "GET /diagnose?code=689009 HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:5176 - "HEAD / HTTP/1.1" 405 Method Not Allowed
+INFO:     127.0.0.1:5783 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:5784 - "GET /diagnose?code=000027 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:5807 - "GET /diagnose?code=300408 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:5831 - "GET /diagnose?code=601398 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:6638 - "GET /diagnose?code=600276 HTTP/1.1" 200 OK

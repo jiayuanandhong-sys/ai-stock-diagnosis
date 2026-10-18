@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Evals 实施报告 v1.0｜PM 三项裁决落实与复跑（AI量化个股诊断 MVP）</title>
+<style>
+  :root{
+    --ink:#1a2332; --sub:#5a6b85; --line:#dce3ee; --bg:#f7f9fc; --card:#ffffff;
+    --blue:#2563eb; --blue-bg:#eff6ff; --green:#15803d; --green-bg:#f0fdf4;
+    --red:#b91c1c; --red-bg:#fef2f2; --amber:#b45309; --amber-bg:#fffbeb;
+    --gray:#6b7280; --gray-bg:#f3f4f6;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:"Microsoft YaHei","PingFang SC",sans-serif;color:var(--ink);
+       background:var(--bg);line-height:1.75;font-size:14px;padding:32px 0}
+  .page{max-width:960px;margin:0 auto;background:var(--card);border:1px solid var(--line);
+        border-radius:10px;padding:40px 48px}
+  h1{font-size:22px;margin-bottom:4px}
+  .meta{color:var(--sub);font-size:12.5px;margin-bottom:20px;padding-bottom:16px;
+        border-bottom:2px solid var(--ink)}
+  h2{font-size:16.5px;margin:30px 0 10px;padding-left:10px;border-left:4px solid var(--blue)}
+  h3{font-size:14.5px;margin:18px 0 8px;color:var(--ink)}
+  p{margin:6px 0}
+  table{width:100%;border-collapse:collapse;margin:10px 0;font-size:13px}
+  th{background:var(--blue-bg);color:var(--ink);font-weight:600;text-align:left;
+     padding:7px 10px;border:1px solid var(--line)}
+  td{padding:6px 10px;border:1px solid var(--line);vertical-align:top}
+  tr:nth-child(even) td{background:#fafbfd}
+  code{background:var(--gray-bg);padding:1px 5px;border-radius:3px;font-size:12.5px;
+       font-family:Consolas,monospace}
+  .tag{display:inline-block;padding:1px 9px;border-radius:9px;font-size:12px;font-weight:600;white-space:nowrap}
+  .t-green{background:var(--green-bg);color:var(--green)}
+  .t-red{background:var(--red-bg);color:var(--red)}
+  .t-amber{background:var(--amber-bg);color:var(--amber)}
+  .t-gray{background:var(--gray-bg);color:var(--gray)}
+  .t-blue{background:var(--blue-bg);color:var(--blue)}
+  .banner{border-radius:8px;padding:14px 18px;margin:14px 0;font-size:13.5px}
+  .b-green{background:var(--green-bg);border:1px solid #bbf7d0}
+  .b-blue{background:var(--blue-bg);border:1px solid #bfdbfe}
+  .b-amber{background:var(--amber-bg);border:1px solid #fde68a}
+  .b-red{background:var(--red-bg);border:1px solid #fecaca}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:12px 0}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:8px;
+        padding:12px 14px;text-align:center}
+  .stat b{font-size:24px;display:block}
+  .stat span{font-size:12px;color:var(--sub)}
+  .sg{color:var(--green)} .sr{color:var(--red)} .sa{color:var(--amber)} .sb{color:var(--blue)}
+  ul,ol{padding-left:22px;margin:6px 0}
+  li{margin:3px 0}
+  .mono{font-family:Consolas,monospace;font-size:12px;background:var(--gray-bg);
+        padding:10px 14px;border-radius:6px;white-space:pre-wrap;margin:8px 0}
+  .foot{margin-top:28px;padding-top:14px;border-top:1px solid var(--line);
+        color:var(--sub);font-size:12px}
+  @media print{body{background:#fff;padding:0}.page{border:none;max-width:100%}}
+</style>
+</head>
+<body>
+<div class="page">
+
+<h1>Evals 实施报告 v1.0 —— PM 三项裁决落实与复跑</h1>
+<div class="meta">
+AI 量化个股诊断 MVP ｜ 数据集 <b>golden-dataset v1.0</b>（41 案例）｜ 复跑 run_id <b>20261018T043206Z</b><br>
+PM 裁决日期：2026-10-18 ｜ 前序报告：v0.3（工程实施）、v0.2/v0.1（设计）｜ 评测框架：PEG checker v1.0.0
+</div>
+
+<div class="banner b-green">
+<b>复跑结论</b>：<b>28 PASS / 0 FAIL / 8 BLOCKED / 5 NOT_RUN</b>，断言级 <b>58 PASS / 0 FAIL / 41 NOT_RUN</b>，
+<b>P0 零失败 → 评测轮次判定 GO-候选</b>。v0.3 轮 3 个 P0 FAIL（OPEN-E01 口径分歧）在公式定案后全部转 PASS，
+双实现比对 <b>max_diff = 0.0</b>（纯 Python 真值与产品 pandas 逐位一致）。<b>GO-候选 ≠ 放行</b>：8 个 BLOCKED
+与 5 个 NOT_RUN（LLM Judge、E2E HTTP 层、holdout）未清零，放行判定仍归 release-acceptance 流程由 PM 裁决。
+</div>
+
+<h2>1. PM 三项裁决与落实对照</h2>
+
+<table>
+<tr><th style="width:12%">裁决项</th><th style="width:30%">裁决内容（2026-10-18）</th><th>落实位置与验证</th></tr>
+<tr>
+  <td><b>D1 OPEN-E01</b></td>
+  <td>百分位公式定案为 <b>rank/N</b>（平均并列名次 / N×100）</td>
+  <td><code>truth_lib.pct_from_rank</code>、<code>peg_checker._pct_from_ranks</code>、
+      <code>peg_checker.s_from_sraw</code> 三处全部切换 rank/N（Fraction 精确）；L3-010 标准答案
+      83.33 → <b>62.5</b>；L3-009/010/011 由 FAIL 转 <span class="tag t-green">PASS</span>；
+      已知样本 kg1 重算为 62.5（单测 14/14 回归通过，v0.1 错误 66.67 仍被 PEG-3 拦截）</td>
+</tr>
+<tr>
+  <td><b>D2 OPEN-E08</b></td>
+  <td>REQ-003 提前复核实现形态定案为<b>方案A（运行时自动判断）</b></td>
+  <td>L6-037 由 BLOCKED 转 FROZEN 并真实执行：构造 +7.0% / +2.0% 双面板调用产品
+      <code>trade_cal.early_review_flags</code>——条件1 双向 <span class="tag t-green">PASS</span>；
+      条件2（业绩预告自动判断）产品缺数据源 → <span class="tag t-gray">NOT_RUN</span>（产品待办）；
+      条件3（成交异常）阈值未定义 → <span class="tag t-gray">NOT_RUN</span>（新开 <b>OPEN-E09</b>）</td>
+</tr>
+<tr>
+  <td><b>D3 风险分级</b></td>
+  <td>v0.3 分级体系批准（P0 严重错误 / P1 验收必须 / P2 建议）</td>
+  <td><code>dataset_stats.json → pm_decisions</code> 与 <code>frozen_manifest.json →
+      pm_decisions_20261018</code> 双处留痕；当前分布 <b>P0=17 / P1=22 / P2=2</b> 即批准口径下的实际分布；
+      L6-037 维持 P1（REQ-003 已批准需求不降级，修正 #3 继续有效）</td>
+</tr>
+</table>
+
+<h2>2. 复跑结果总览（run_20261018T043206Z）</h2>
+
+<div class="stats">
+  <div class="stat"><b class="sg">28</b><span>PASS（v0.3 轮为 24）</span></div>
+  <div class="stat"><b class="sr">0</b><span>FAIL（v0.3 轮为 3）</span></div>
+  <div class="stat"><b class="sa">8</b><span>BLOCKED（L6-037 解锁 −1）</span></div>
+  <div class="stat"><b class="sb">5</b><span>NOT_RUN（LLM/E2E/holdout）</span></div>
+</div>
+
+<h3>2.1 状态转移（v0.3 → v1.0）</h3>
+<table>
+<tr><th>案例</th><th>v0.3</th><th>v1.0</th><th>转移原因</th></tr>
+<tr><td>L3-009 / L3-010 / L3-011</td><td><span class="tag t-red">FAIL</span>（P0）</td><td><span class="tag t-green">PASS</span></td>
+    <td>OPEN-E01 定案 rank/N：独立真值与产品同口径，比对 diffs 全 0（L3-009 max_sraw_diff=0.0）</td></tr>
+<tr><td>L6-037</td><td><span class="tag t-amber">BLOCKED</span></td><td><span class="tag t-green">PASS</span></td>
+    <td>OPEN-E08 方案A 解锁：条件1（周涨跌幅≥5%）真实执行双向 PASS；条件2/3 如实 NOT_RUN</td></tr>
+<tr><td>其余 24 案例状态不变</td><td><span class="tag t-green">PASS</span></td><td><span class="tag t-green">PASS</span></td>
+    <td>公式切换零波及（回归验证：L2-006/007/008、L3-012/013/024、L4/L5/L6 全部维持 PASS）</td></tr>
+</table>
+
+<h3>2.2 关键证据摘录</h3>
+<ul>
+<li><b>L3-010 并列名次</b>：产品 F1 = {SYN-TIE1: <b>62.5</b>, SYN-TIE2: <b>62.5</b>, SYN-TIE3: <b>25.0</b>, SYN-TIE4: <b>0</b>}
+    与 Fraction 精确手算真值完全一致（名次 1.5 → pct=1.5/4×100=37.5 → F1=100−37.5=62.5）；v0.1 的 66.67
+    历史错误样本继续保留为 PEG-3 回归用例（rank/N 口径下 66.67 仍为错误值，拦截有效）。</li>
+<li><b>L6-037 方案A·条件1</b>：+7.0% 面板 → 产品输出精确命中预期文案
+    「近一周涨跌幅 +7.0%（绝对值≥5%），建议在复核日之前提前复核。」；+2.0% 面板 → 无触发语、
+    通用提示语在。双向断言均 PASS，被测对象为产品真实代码 <code>trade_cal.early_review_flags</code>。</li>
+<li><b>L6-022 合规硬门禁</b>（延续 v0.3）：注入伪造违禁 LLM 输出 → 重试恰 1 次 → 回退模板 → 零禁词，维持 PASS。</li>
+</ul>
+
+<h3>2.3 8 个 BLOCKED / 5 个 NOT_RUN 明细</h3>
+<table>
+<tr><th>状态</th><th>案例</th><th>阻塞原因（放行前必须清零或 PM 显式处置）</th></tr>
+<tr><td rowspan="8"><span class="tag t-amber">BLOCKED</span></td>
+    <td>HO-033~036</td><td>holdout 名单待 PM 指定（4 例，一次性验证不反馈开发）</td></tr>
+    <td>L3-014</td><td>次新股 H 窗口口径（OPEN-E03：≥26 周即算 vs 不足 52 周 H 缺失）待 PM 定案</td></tr>
+    <td>L3-025 / L3-026</td><td>主备数据源顺序冲突 C-01（ADR-002 vs T-02）与调池股历史归属 OPEN-E02 待裁决</td></tr>
+    <td>L1-028</td><td>数据源故障注入需备援源连通性证据（缺证据，非口径问题）</td></tr>
+    <td>L1-029 附带 NOT_RUN 断言</td><td>数据新鲜度 online 态需联网 E2E</td></tr>
+<tr><td rowspan="3"><span class="tag t-gray">NOT_RUN</span></td>
+    <td>E2E-001 / E2E-002</td><td>需启动完整服务（报告链路 + DOCX 一致性 + 冷跑）</td></tr>
+    <td>L5-031 / L6-023 / L6-038</td><td>需服务（L5 章节核验 / HTTP 契约 / 限流）</td></tr>
+    <td>L4 全部 Judge 断言</td><td>真实 LLM 态未配置（rubric-l4-v0.2 就绪，校准计划就绪）</td></tr>
+</table>
+
+<h2>3. 本轮修复：PEG-3 当场拦截检查器自身残留</h2>
+<p>公式切换后首轮 PEG 校验 <b>overall=FAIL</b>：L3-009 的 <code>s_from_sraw</code> 复算值 50.0 ≠ 真值 60.0。
+根因：peg_checker 的 <code>s_from_sraw</code> 分支内联实现了旧公式 (r−1)/(N−1)，与已切换的
+<code>_pct_from_ranks</code> 不一致——<b>评测基础设施自身的口径残留，被 PEG-3 数学复算当场逮住</b>。
+修复后复跑 PEG 全绿。这验证了「评测集自身也要有质量门」的必要性：检查器多处实现同一公式时，
+任何一处漏改都会在冻结前暴露。</p>
+
+<h2>4. 已核实证据 vs 未运行事项（延续修正 #8 纪律）</h2>
+<table>
+<tr><th>类别</th><th>内容</th></tr>
+<tr><td><span class="tag t-green">已真实运行</span></td>
+    <td>PEG 单测 14/14（日志 logs/phase1_peg_unit_tests.log）；PEG-1~6 全绿校验
+    （logs/phase2_build_dataset_v10.log）；Runner 真实执行 33 个 FROZEN 案例中 28 个可测案例
+    （logs/phase3_run_evals_v10.log + results/run_20261018T043206Z/{results.json, results.md, eval_run.log}）；
+    被测对象均为产品 src 真实代码（factor_engine / compliance / trade_cal / pool_manager / interpretation）</td></tr>
+<tr><td><span class="tag t-gray">未运行</span></td>
+    <td>LLM Judge（真实 LLM 未配置，10 条 Judge 断言 NOT_RUN）；E2E HTTP 层（服务未启动）；
+    holdout（名单待指定）；L6-037 条件2/3（产品实现缺口，非评测侧缺口）</td></tr>
+<tr><td><span class="tag t-blue">裁决留痕</span></td>
+    <td>三项 PM 裁决写入 dataset_stats.json 与 frozen_manifest.json（pm_decisions_20261018），
+    Runner 结果元数据同步携带，任何一轮复跑可追溯裁决依据</td></tr>
+</table>
+
+<h2>5. 新增待 PM 裁决 / 产品待办</h2>
+<table>
+<tr><th style="width:14%">编号</th><th style="width:20%">类型</th><th>内容</th></tr>
+<tr><td><b>OPEN-E09</b>（新开）</td><td>口径定义</td>
+    <td>方案A·条件3「成交结构异常」的判定阈值口径未定义（如：量比&gt;N 倍、换手率分位等）。
+    PM 定义后 L6-037 断言 volume_anomaly_auto_detect 转真实执行</td></tr>
+<tr><td><b>产品待办 1</b></td><td>实现缺口</td>
+    <td>方案A·条件2「业绩预告/定期财报披露」自动判断需数据源（当前产品为通用提示语）。
+    补齐后 L6-037 断言 earnings_forecast_auto_detect 转真实执行。<b>REQ-003 为已批准需求，
+    放行前必须补齐或由 PM 显式降级处置</b></td></tr>
+<tr><td>延续未决</td><td>口径/冲突</td>
+    <td>OPEN-E02（调池股归属）、OPEN-E03（次新 H 窗口）、C-01（主备源顺序）、C-02（BR-008 残留文案）、
+    holdout 名单、L4 评测态（详见 v0.3 报告 §7，本轮未变化）</td></tr>
+</table>
+
+<h2>6. 放行口径重申</h2>
+<div class="banner b-amber">
+<b>GO-候选 ≠ 放行。</b>本轮 P0 零失败、确定性可测层全绿，但：① 8 个 BLOCKED（含 4 个 P0 holdout）与
+5 个 NOT_RUN 未清零；② L4 AI 解读层 10 条 Judge 断言未执行（真实 LLM 未配置）；③ REQ-003 方案A
+条件2/3 为产品实现缺口。<b>放行判定属 release-acceptance 流程</b>，须 PM 按 Spec 效力（全部 AC 映射用例
+PASS）裁决。本轮未修改任何产品 Spec/Plan/Tasks/代码，未变更评测阻断标准。
+</div>
+
+<h2>7. 文件清单（本轮变更）</h2>
+<div class="mono">evals/
+├─ dataset/truth_lib.py            # pct_from_rank → rank/N（Fraction 精确）
+├─ dataset/build_dataset.py        # 6 处 formula 标注定案 + L6-037 方案A重写 + pm_decisions 留痕
+├─ peg/peg_checker.py              # _pct_from_ranks + s_from_sraw → rank/N（后者为 PEG-3 拦截后修复）
+├─ peg/make_known_bad.py           # kg1 重算 62.5；kb1(66.67) 保留为跨口径错误样本
+├─ peg/test_peg_checker.py         # 文档字符串同步（14/14 回归通过）
+├─ runner/run_evals.py             # 3 处诊断语义更新 + L6-037 执行器 + 裁决元数据
+├─ dataset/cases_*.jsonl           # 重建（41 案例，冻结 33 / BLOCKED 8）
+├─ dataset/frozen_manifest.json    # v1.0 清单（含 pm_decisions_20261018）
+├─ runner/results/run_20261018T043206Z/   # 本轮复跑产物（results.json/md + eval_run.log）
+├─ logs/phase{1,2,3}_*_v10.log     # 本轮三阶段日志（v0.3 轮日志保留审计）
+└─ reports/Evals实施报告_v1.0.html # 本报告</div>
+
+<div class="foot">
+状态声明：本报告所有 PASS/FAIL 数据来自真实执行（run_20261018T043206Z），可由 README 三条命令确定性复现；
+LLM Judge、E2E HTTP 层、holdout 明确 NOT_RUN；未修改任何产品文件；GO-候选为评测轮次判定，不构成放行决定。
+</div>
+
+</div>
+</body>
+</html>

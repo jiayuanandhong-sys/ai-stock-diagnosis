@@ -1,0 +1,33 @@
+{
+  "steps": {
+    "DoD-1 AC-007 无效代码": {
+      "pass": true,
+      "detail": "HTTP 400；明确提示: True"
+    },
+    "DoD-2 AC-008 池外拒绝+支持范围": {
+      "pass": true,
+      "detail": "HTTP 400；文案与 T-03 一致: True"
+    },
+    "AC-008 非成分股 000000 拒绝": {
+      "pass": true,
+      "detail": "HTTP 400"
+    },
+    "DoD-3 超限返回 429 限流提示": {
+      "pass": true,
+      "detail": "HTTP 429；提示: True"
+    },
+    "并发超限全部 429 且服务存活": {
+      "pass": true,
+      "detail": "20 并发状态码分布: [429]；服务仍可响应: True"
+    },
+    "限流按 IP 隔离·新 IP 正常服务": {
+      "pass": true,
+      "detail": "HTTP 200"
+    },
+    "跨日自动重置": {
+      "pass": true,
+      "detail": "当日超限: True；跨日恢复: True"
+    }
+  },
+  "overall": "ALL PASS"
+}

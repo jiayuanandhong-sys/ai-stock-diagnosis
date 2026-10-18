@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Evals v1.3 · E2E 真实 Web 端到端执行报告</title>
+<style>
+  body{font-family:"Microsoft YaHei","PingFang SC",sans-serif;max-width:1080px;margin:24px auto;padding:0 28px;color:#1f2937;line-height:1.65;background:#fff}
+  h1{font-size:22px;border-bottom:3px solid #1e40af;padding-bottom:8px;color:#1e3a8a}
+  h2{font-size:17px;color:#1e40af;margin-top:28px;border-left:4px solid #1e40af;padding-left:10px}
+  h3{font-size:15px;color:#374151;margin:16px 0 6px}
+  table{border-collapse:collapse;width:100%;font-size:13px;margin:10px 0}
+  th{background:#eff6ff;color:#1e3a8a}
+  th,td{border:1px solid #cbd5e1;padding:6px 9px;text-align:left;vertical-align:top}
+  code{background:#f1f5f9;padding:1px 5px;border-radius:3px;font-size:12.5px;font-family:Consolas,monospace}
+  .ok{color:#15803d;font-weight:600}.bad{color:#b91c1c;font-weight:600}.warn{color:#b45309;font-weight:600}
+  .tag{display:inline-block;font-size:11.5px;padding:1px 8px;border-radius:10px;margin-right:5px}
+  .t-ok{background:#dcfce7;color:#166534}.t-bad{background:#fee2e2;color:#991b1b}
+  .t-warn{background:#fef3c7;color:#92400e}.t-info{background:#dbeafe;color:#1e40af}
+  .t-gray{background:#f1f5f9;color:#475569}
+  .box{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px 14px;margin:10px 0;font-size:13px}
+  .meta{color:#6b7280;font-size:12.5px}
+  .banner{border-radius:10px;padding:14px 18px;margin:14px 0;font-size:14.5px}
+  .b-ok{background:#f0fdf4;border:1.5px solid #86efac}
+  .b-warn{background:#fffbeb;border:1.5px solid #fcd34d}
+  .num{font-variant-numeric:tabular-nums}
+  .small{font-size:12px;color:#64748b}
+</style>
+</head>
+<body>
+
+<h1>Evals v1.3 · E2E 真实 Web 端到端执行报告<br><span style="font-size:14px;color:#475569">真实服务进程 + 真实 HTTP + 真实数据层网络取数（放行前清单「E2E HTTP 层」项完成）</span></h1>
+<p class="meta">运行标识 run_20261018T061931Z ｜ 数据集清单 v1.2（PEG-1~6 全绿，41 案例）｜ E2E Runner v1.3.0 ｜ 2026-10-18</p>
+
+<div class="banner b-ok"><b>E2E 范围判定：14 PASS / 1 PARTIAL / 0 FAIL</b>（断言级 22 PASS / 0 FAIL / 1 NOT_RUN）——
+离线 Runner 中全部「需服务 / 需联网」断言已真实执行，<b>产品侧零缺陷发现</b>。唯一 PARTIAL（L6-038）系跨日重置断言需真实日历翻转，单日内物理不可执行。</div>
+<div class="banner b-warn"><b>合并口径（离线 run_20261018T051608Z + 本轮 E2E）：25 PASS / 0 FAIL / 8 PARTIAL / 8 BLOCKED / 0 NOT_RUN，退出码 2（未完整验收）。</b>
+剩余 PARTIAL 全部为 LLM Judge 断言（需 API 密钥）与两项环境受限断言；BLOCKED 全部为 PM 未决事项与 holdout 名单。案例级 NOT_RUN 已清零。</div>
+
+<h2>一、执行环境（真实端到端，非 mock）</h2>
+<table>
+<tr><th style="width:150px">项目</th><th>内容</th></tr>
+<tr><td>被测服务</td><td>产品真实进程 <code>uvicorn src.app:app</code> @ <code>127.0.0.1:8137</code>（子进程拉起，产物含 server.log）</td></tr>
+<tr><td>部署配置</td><td>与 <code>deploy/start_server.bat</code> 一致：<code>SDD_POOL_MODE=demo</code>、<code>SDD_DAILY_LIMIT=50</code>（不 mock 任何被测链路）</td></tr>
+<tr><td>HTTP 层</td><td>真实 TCP HTTP 请求（urllib），覆盖 <code>/</code>、<code>/diagnose</code>、<code>/download</code> 三路由、400/429/200 全状态路径</td></tr>
+<tr><td>数据层</td><td>真实网络取数（新浪主源日线 + 东财备援 + 百度估值截面）：首轮 run_20261018T060857Z 实拉两演示池全部成员（沪深300 样本 21 只 + 中证500 样本 20 只），当日面板 41 份落盘（<code>panel_*_20240901_20261018.parquet</code>，fetch_date=2026-10-18）</td></tr>
+<tr><td>报告链路</td><td>正式运行前清空 4 只测试股报告缓存，全部报告为<b>新鲜构建</b>（603799 构建 5s / 000858 温态+冷跑 13s / 000009 池预热后 6s）</td></tr>
+<tr><td>门禁纪律</td><td>与离线 Runner 相同：冻结清单 valid + PEG PASS + 逐案例 sha256 校验通过后才执行；不修改任何冻结数据集文件</td></tr>
+</table>
+
+<h2>二、E2E 逐案例结果（15 案例 / 23 断言）</h2>
+<table>
+<tr><th style="width:78px">案例</th><th style="width:60px">风险</th><th style="width:190px">断言（风险级）</th><th style="width:56px">状态</th><th>关键证据（真实执行）</th></tr>
+<tr><td rowspan="4"><b>E2E-001</b><br><span class="small">603799 报告链路</span></td><td rowspan="4" class="bad">P0</td>
+ <td>chapters_17_complete（P1）</td><td class="ok">PASS</td><td>HTTP 200；17/17 章节零缺失；观察日 2026-10-16；池归属「沪深300」在报告内</td></tr>
+ <tr><td>coloring_consistent（P1）</td><td class="ok">PASS</td><td>47 项着色检查（S/H/四侧面/18 因子的色值+分档标签 vs <code>FE.band</code> 基准）全部一致</td></tr>
+ <tr><td>forbidden_scan_zero_hit（P0）</td><td class="ok">PASS</td><td>compliance.T01 扫描全文 11 禁词零命中</td></tr>
+ <tr><td>boundary_phrases_present（P1）</td><td class="ok">PASS</td><td>4 条必需口径文案（不代表上涨概率/不构成/怎么读这个分数/风险与边界）齐备</td></tr>
+<tr><td rowspan="4"><b>E2E-002</b><br><span class="small">000858 报告+冷跑</span></td><td rowspan="4">P1</td>
+ <td>chapters_17_complete（P1）</td><td class="ok">PASS</td><td>HTTP 200；S=57.1 / H=98.1 / 排名 10/21</td></tr>
+ <tr><td>cold_run_no_cache（P1）</td><td class="ok">PASS</td><td>删除当日报告目录+目标股当日面板后冷跑 7.0s 重建成功；温态/冷跑 S、H、排名、复核日、观察日全一致</td></tr>
+ <tr><td>cold_run_data_freshness（P1）</td><td class="ok">PASS</td><td>重取面板 max_date=2026-10-16 = 最新交易日；fetch_date=2026-10-18；行数充足（≥250）</td></tr>
+ <tr><td>docx_online_consistency（P1）</td><td class="ok">PASS</td><td>Gate V 11 项口径全过（名称+代码/S值/H值/同池/排名/复核日/观察日/18因子/四侧面/两章节）</td></tr>
+<tr><td><b>E2E-003a</b><br><span class="small">000009 中证500</span></td><td>P1</td><td>report_e2e（P1）</td><td class="ok">PASS</td><td>HTTP 200 真实报告（demo 中证500 样本 20 只）；池归属正确；S=45.0/H=53.8；章节+合规全过</td></tr>
+<tr><td><b>E2E-003b</b><br><span class="small">000021 中证500</span></td><td>P1</td><td>report_e2e（P1）</td><td class="ok">PASS</td><td>HTTP 200；S=10.0/H=11.5；池归属、章节、合规全过</td></tr>
+<tr><td><b>E2E-004a</b><br><span class="small">000012 中证1000</span></td><td>P1</td><td>report_e2e（P1）</td><td class="ok">PASS</td><td>demo 契约行为：400 + 池归属「中证1000」在响应内 + 透明范围提示 + 未生成报告（<span class="small">expected_output.report_generated=null；full 模式链路属 M2</span>）</td></tr>
+<tr><td><b>E2E-004b</b><br><span class="small">000028 中证1000</span></td><td>P1</td><td>report_e2e（P1）</td><td class="ok">PASS</td><td>同上（400 + 池归属 + 范围提示）。案例级合并状态 PARTIAL：离线 <code>panel_cached</code> 断言 NOT_RUN（demo 范围外池不预热，000028 无缓存面板）</td></tr>
+<tr><td><b>E2E-005a/b</b><br><span class="small">000011/000014 中证2000</span></td><td>P1</td><td>report_e2e（P1）×2</td><td class="ok">PASS ×2</td><td>同 E2E-004 口径：400 + 「中证2000」池归属 + 范围提示 + 未生成报告</td></tr>
+<tr><td><b>L2-008</b><br><span class="small">取数防泄漏护栏</span></td><td class="bad">P0</td><td>data_fetcher_asof_guard（P0）</td><td class="ok">PASS</td><td>以 as_of=2026-06-30 为结束日真实取数（新浪源 439 行）：面板最大日期=2026-06-30 ≤ as_of，无未来数据泄漏</td></tr>
+<tr><td><b>L1-029</b><br><span class="small">过期数据拒用</span></td><td>P1</td><td>stale_data_rejected（P1）</td><td class="ok">PASS</td><td>将当日面板 fetch_date 篡改为 2000-01-01 → <code>fetch_panel</code> 拒用缓存（from_cache=False）并真实重取，fetch_date 恢复当日、数据不变</td></tr>
+<tr><td><b>L5-031</b><br><span class="small">docx 一致性（regression）</span></td><td>P1</td><td>online_docx_consistency（P1）</td><td class="ok">PASS</td><td>Gate V 11 项口径（000858）全过——补齐离线 Runner 无 handler 的 regression 案例执行</td></tr>
+<tr><td><b>L6-020</b><br><span class="small">非法格式 6 变体</span></td><td>P1</td><td>http_400（P1）</td><td class="ok">PASS</td><td>6 变体（12345/abc123/1234567/1/中文字/空）全部 400 +「格式无效」文案</td></tr>
+<tr><td><b>L6-021</b><br><span class="small">池外 4 代码</span></td><td>P1</td><td>http_400（P1）</td><td class="ok">PASS</td><td>830001/000000/832566/600768 全部 400 +「暂不支持」「当前支持」BR-009 文案</td></tr>
+<tr><td rowspan="2"><b>L6-023</b><br><span class="small">零采集契约</span></td><td rowspan="2" class="bad">P0</td>
+ <td>payload_only_code（P0）</td><td class="ok">PASS</td><td>首页唯一输入字段=code；仅携带 code 的请求走通完整链路（200）</td></tr>
+ <tr><td>no_cookie_no_tracking（P0）</td><td class="ok">PASS</td><td>响应无 Set-Cookie、无 &lt;script&gt;、无外链资源、无跟踪特征（AC-009/BR-004）</td></tr>
+<tr><td rowspan="2"><b>L6-038</b><br><span class="small">限流（regression）</span></td><td rowspan="2">P2</td>
+ <td>rate_limit_429（P2）</td><td class="ok">PASS</td><td>真实压测：28 次低成本请求耗尽当日配额后第 51 次请求（当日累计）触发 429；服务存活（/ 仍 200）</td></tr>
+ <tr><td>cross_day_reset（P2）</td><td class="warn">NOT_RUN</td><td>需跨自然日窗口验证配额重置（真实日历翻转），单日内物理不可执行；T-08 单测与 Gate V B 部分已覆盖 rollover 语义</td></tr>
+</table>
+
+<h2>三、合并五状态（离线 run_20261018T051608Z + 本轮 E2E）</h2>
+<table>
+<tr><th>风险级</th><th>总数</th><th>PASS</th><th>PARTIAL</th><th>FAIL</th><th>BLOCKED</th><th>NOT_RUN</th><th>完整通过率</th></tr>
+<tr><td><b>P0</b></td><td class="num">17</td><td class="num ok">9</td><td class="num">5</td><td class="num">0</td><td class="num">3</td><td class="num">0</td><td class="num">9/17</td></tr>
+<tr><td><b>P1</b></td><td class="num">22</td><td class="num ok">16</td><td class="num">1</td><td class="num">0</td><td class="num">5</td><td class="num">0</td><td class="num">16/22</td></tr>
+<tr><td><b>P2</b></td><td class="num">2</td><td class="num">0</td><td class="num">2</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0/2</td></tr>
+<tr><td><b>合计</b></td><td class="num"><b>41</b></td><td class="num ok"><b>25</b></td><td class="num"><b>8</b></td><td class="num"><b>0</b></td><td class="num"><b>8</b></td><td class="num"><b>0</b></td><td class="num"><b>25/41</b></td></tr>
+</table>
+<div class="box">
+<b>P0 明细：</b>PARTIAL 5 = L3-013、L4-016/017/018/019（全部为 LLM Judge 断言，需密钥）；BLOCKED 3 = HO-033/034/035（holdout 未冻结）。
+<b>P0 执行类断言（非 Judge）已全部真实执行且通过</b>——含本轮 E2E-001/L2-008/L6-023 三个 P0 案例与 E2E-002/L6-020/021 等。
+</div>
+<div class="box">
+<b>对比 v1.2 离线运行（12 PASS / 16 PARTIAL / 8 BLOCKED / 5 NOT_RUN）：</b>
+13 个 E2E 案例状态跃迁为 PASS；案例级 NOT_RUN 清零；FAIL 始终为 0。
+合并规则=离线断言 + E2E 断言按断言名去重合并后重新五状态聚合；未冻结案例保持 BLOCKED（合并不得 launder 冻结状态）。
+</div>
+<h3>剩余未达 PASS 的 16 案例（全部非产品缺陷）</h3>
+<table>
+<tr><th style="width:150px">类别</th><th>案例</th><th>解除条件</th></tr>
+<tr><td>LLM Judge 断言</td><td>L3-013、L4-016/017/018/019/030（6 案例）</td><td>配置真实 LLM API 密钥后执行 Judge（IB-02 请批项）</td></tr>
+<tr><td>环境受限断言</td><td>L6-038（cross_day_reset）、E2E-004b（panel_cached）</td><td>前者需跨自然日窗口；后者可为 000028 预热面板（demo 范围外池，属可选）</td></tr>
+<tr><td>PM 未决（BLOCKED）</td><td>L3-014（OPEN-E03）、L3-025（OPEN-E06）、L3-026（OPEN-E02）、L1-028（C-01 主备顺序）</td><td>PM 定案后冻结执行</td></tr>
+<tr><td>holdout 名单（BLOCKED）</td><td>HO-033/034/035/036</td><td>PM 批准 holdout 股票名单后冻结执行</td></tr>
+</table>
+
+<h2>四、披露与发现（5 项，均如实留痕）</h2>
+<table>
+<tr><th style="width:56px">编号</th><th style="width:170px">发现</th><th>说明与处置</th></tr>
+<tr><td><b>F1</b></td><td>冻结案例元数据 http_method=POST</td><td>E2E-001/002、L6-020/021 等案例 input 标注 <code>http_method:"POST"</code>，产品真实契约为 <b>GET</b> <code>/diagnose?code=</code>（T-07 表单 method="get"、FastAPI <code>@app.get</code>）。本轮按真实契约执行并在证据中披露；<b>冻结数据集未动</b>，作为下一 PEG 周期候选修订项（元数据勘误）</td></tr>
+<tr><td><b>F2</b></td><td>数据源名称含空格</td><td>akshare 东财源对 000858 返回名称「五 粮 液」（含空格），出现在报告标题与正文。在线版与 docx <b>同源一致</b>（AC-011 不受影响）；名称比对按去空格归一化。候选产品改进项：名称展示前清洗空格</td></tr>
+<tr><td><b>F3</b></td><td>E2E-004/005 为 demo 边界行为</td><td>中证1000/2000 池在 demo 部署配置下的正确行为 = 400 + 正确池归属 + 透明范围提示（案例 <code>report_generated:null</code>）。full 模式报告生成链路（该池全量成分预热）属 M2 范围，本轮未覆盖</td></tr>
+<tr><td><b>F4</b></td><td>L6-038 cross_day_reset 不可单日验证</td><td>跨日重置需真实日历翻转；NOT_RUN 原因已写入结果。T-08 单测（blocked_when_full / reset_next_day / ip_isolated）与 Gate V B 部分已覆盖该语义</td></tr>
+<tr><td><b>F5</b></td><td>Runner 基础设施自守护生效</td><td>本轮开发过程中 Runner 自身 2 次 unpack 缺陷（diagnose 返回值）与 1 次合并逻辑缺陷（BLOCKED 洗白）均被五状态纪律当场拦截为显式 FAIL/PARTIAL 记录，未污染任何产品判定；修复后全部案例重跑，最终结果以 run_20261018T061931Z 为准</td></tr>
+</table>
+
+<h2>五、放行前清单更新</h2>
+<table>
+<tr><th style="width:330px">事项</th><th style="width:80px">v1.2 状态</th><th style="width:80px">本轮后</th><th>说明</th></tr>
+<tr><td>E2E HTTP 层（服务/联网断言）</td><td class="warn">未执行</td><td class="ok">✅ 完成</td><td>15 案例真实执行，产品零缺陷</td></tr>
+<tr><td>LLM Judge（真实 LLM 态）</td><td class="warn">待办</td><td class="warn">待办</td><td>6 案例需 API 密钥（IB-02 请批项），唯一剩余执行类事项</td></tr>
+<tr><td>holdout ×4 名单（HO-033~036）</td><td class="warn">待 PM</td><td class="warn">待 PM</td><td>未冻结（BLOCKED）</td></tr>
+<tr><td>OPEN-E02 / E03 / E06、C-01</td><td class="warn">待 PM</td><td class="warn">待 PM</td><td>L3-026 / L3-014 / L3-025 / L1-028 未冻结（BLOCKED）</td></tr>
+<tr><td>备源证据（东财备援实际切换）</td><td class="warn">待办</td><td class="warn">待办</td><td>需主源故障窗口或注入式联网验证（与 C-01 相关）</td></tr>
+<tr><td>跨日重置 / 000028 面板预热（可选）</td><td>—</td><td class="warn">环境受限</td><td>cross_day_reset 需跨日窗口；panel_cached 可选预热</td></tr>
+</table>
+<div class="box"><b>结论：</b>E2E HTTP 层完成后，全部 41 案例中 25 案例完整通过、0 FAIL；执行类剩余事项收敛为「LLM Judge 需密钥」一项。
+生产放行（NO-GO → GO）仍需：① LLM Judge 执行（IB-02）；② PM 决策 OPEN-E02/E03/E06、C-01 与 holdout 名单；③ 按 release-acceptance 技能做发布验收裁决。</div>
+
+<h2>六、产物清单</h2>
+<table>
+<tr><th>产物</th><th>路径</th></tr>
+<tr><td>E2E Runner（本轮新增）</td><td><code>evals/runner/run_e2e.py</code></td></tr>
+<tr><td>最终运行结果（官方）</td><td><code>evals/runner/results_e2e/run_20261018T061931Z/</code>（results.json / results.md / eval_run.log / server.log / 下载 docx 留样 / 冷跑备份）</td></tr>
+<tr><td>首轮真实取数证据</td><td><code>evals/runner/results_e2e/run_20261018T060857Z/server.log</code>（两演示池 41 成员真实网络拉取）+ <code>data_cache/panel_*_20240901_20261018.parquet</code></td></tr>
+<tr><td>历次运行（含基础设施缺陷拦截记录）</td><td><code>evals/runner/results_e2e/run_20261018T06085{7,8}Z、run_20261018T061{2,4,9}Z</code> 及 <code>evals/logs/e2e_run_console*.log</code></td></tr>
+<tr><td>离线基准运行</td><td><code>evals/runner/results/run_20261018T051608Z/</code>（v1.2，合并基准）</td></tr>
+</table>
+
+<p class="meta" style="margin-top:30px">Evals 实施报告系列 v1.3 ｜ 生成于 2026-10-18 ｜ 数据来源：run_20261018T061931Z/results.json（机器可复核）</p>
+</body>
+</html>

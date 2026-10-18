@@ -1,0 +1,321 @@
+{
+  "parts": {
+    "A_color_pairs": {
+      "total": 48,
+      "wrong": [],
+      "colors_seen": [
+        "#1E7B3C",
+        "#555555",
+        "#C00000"
+      ]
+    },
+    "A": {
+      "index": {
+        "status": 200,
+        "bytes": 1205
+      },
+      "index_findings": {
+        "无Set-Cookie": true,
+        "无<script>": true,
+        "无login字样": true,
+        "唯一输入字段code": true
+      },
+      "demo_boundary": {
+        "code": "000001",
+        "status": 400,
+        "is_demo_page": true
+      },
+      "report_603799": {
+        "status": 200,
+        "bytes": 214246,
+        "seconds": 0.0,
+        "fresh_build": false,
+        "missing_sections": []
+      },
+      "report_000858": {
+        "status": 200,
+        "bytes": 206101,
+        "seconds": 0.0,
+        "fresh_build": true,
+        "missing_sections": []
+      },
+      "color_pairs": {
+        "total": 48,
+        "wrong": [],
+        "colors_seen": [
+          "#1E7B3C",
+          "#555555",
+          "#C00000"
+        ]
+      },
+      "compliance": {
+        "passed": true,
+        "forbidden_hits": [],
+        "missing_phrases": []
+      },
+      "review_date": {
+        "score": "2026-10-16",
+        "review": "2026-10-23",
+        "expect": "2026-10-23",
+        "crossed": false,
+        "gq_case": {
+          "review": "2026-10-14",
+          "crossed": true
+        }
+      },
+      "docx_consistency": {
+        "名称+代码": true,
+        "S值(10.0)": true,
+        "同池标注": true,
+        "排名(19/20)": true,
+        "复核日(2026-10-23)": true,
+        "观察日(2026-10-16)": true,
+        "18因子分齐全": true,
+        "四侧面均值(4项)": true,
+        "章节:怎么读这个分数": true,
+        "章节:风险与边界": true,
+        "H值(17.3)": true
+      },
+      "zero_collection": {
+        "no_set_cookie": true,
+        "payload": "code=000858",
+        "index": {
+          "无Set-Cookie": true,
+          "无<script>": true,
+          "无login字样": true,
+          "唯一输入字段code": true
+        }
+      }
+    },
+    "B": {
+      "low_limit_seq": [
+        200,
+        200,
+        200,
+        429,
+        429
+      ],
+      "burst_20": {
+        "statuses": [
+          429
+        ],
+        "server_alive": true
+      },
+      "rollover": {
+        "blocked_when_full": true,
+        "reset_next_day": true,
+        "ip_isolated": true
+      }
+    },
+    "B_verdict": "PASS",
+    "C": {
+      "rows": [
+        {
+          "pool": "沪深300",
+          "target": "000001",
+          "n_sample": 14,
+          "n_failed_members": 0,
+          "factors_valid": 18,
+          "S": 100.0,
+          "H": 100.0,
+          "factor_scores_max_diff": 0.0,
+          "S_recheck_diff": 0.0,
+          "F4_handcheck_ok": true,
+          "S_raw_eq_factor_mean": true,
+          "series_weeks": 53,
+          "seconds": 3.3,
+          "verdict": "PASS"
+        },
+        {
+          "pool": "中证500",
+          "target": "000009",
+          "n_sample": 14,
+          "n_failed_members": 0,
+          "factors_valid": 18,
+          "S": 71.4,
+          "H": 63.5,
+          "factor_scores_max_diff": 0.0,
+          "S_recheck_diff": 0.0,
+          "F4_handcheck_ok": true,
+          "S_raw_eq_factor_mean": true,
+          "series_weeks": 53,
+          "seconds": 30.3,
+          "verdict": "PASS"
+        },
+        {
+          "pool": "中证1000",
+          "target": "000012",
+          "n_sample": 14,
+          "n_failed_members": 0,
+          "factors_valid": 18,
+          "S": 71.4,
+          "H": 65.4,
+          "factor_scores_max_diff": 0.0,
+          "S_recheck_diff": 0.0,
+          "F4_handcheck_ok": true,
+          "S_raw_eq_factor_mean": true,
+          "series_weeks": 53,
+          "seconds": 23.3,
+          "verdict": "PASS"
+        },
+        {
+          "pool": "中证2000",
+          "target": "000011",
+          "n_sample": 14,
+          "n_failed_members": 0,
+          "factors_valid": 18,
+          "S": 100.0,
+          "H": 100.0,
+          "factor_scores_max_diff": 0.0,
+          "S_recheck_diff": 0.0,
+          "F4_handcheck_ok": true,
+          "S_raw_eq_factor_mean": true,
+          "series_weeks": 53,
+          "seconds": 32.1,
+          "verdict": "PASS"
+        }
+      ],
+      "detail": {
+        "沪深300": {
+          "failed_members": [],
+          "side_means": {
+            "估值特征": 64.3,
+            "价格行为": 77.0,
+            "交易行为": 48.2,
+            "风险特征": 91.1
+          }
+        },
+        "中证500": {
+          "failed_members": [],
+          "side_means": {
+            "估值特征": 83.3,
+            "价格行为": 50.5,
+            "交易行为": 28.6,
+            "风险特征": 66.1
+          }
+        },
+        "中证1000": {
+          "failed_members": [],
+          "side_means": {
+            "估值特征": 66.7,
+            "价格行为": 46.4,
+            "交易行为": 30.4,
+            "风险特征": 87.5
+          }
+        },
+        "中证2000": {
+          "failed_members": [],
+          "side_means": {
+            "估值特征": 54.8,
+            "价格行为": 81.6,
+            "交易行为": 91.1,
+            "风险特征": 17.9
+          }
+        }
+      },
+      "network_calls": 0,
+      "cache_hits": 0
+    },
+    "D": [
+      {
+        "pool": "沪深300",
+        "target": "000001",
+        "label": "沪深300（沪深300 全池）",
+        "members": 300,
+        "ok": true
+      },
+      {
+        "pool": "中证500",
+        "target": "000009",
+        "label": "中证500（中证500 全池）",
+        "members": 500,
+        "ok": true
+      },
+      {
+        "pool": "中证1000",
+        "target": "000012",
+        "label": "中证1000（中证1000 全池）",
+        "members": 1000,
+        "ok": true
+      },
+      {
+        "pool": "中证2000",
+        "target": "000011",
+        "label": "中证2000（中证2000 全池）",
+        "members": 2000,
+        "ok": true
+      }
+    ],
+    "D_verdict": "PASS"
+  },
+  "ac": {
+    "AC-007": {
+      "verdict": "PASS",
+      "method": "真实 HTTP：6 个无效/空代码用例全部 400+提示、不生成报告",
+      "evidence": "C:\\Users\\28309\\WorkBuddy\\2026-10-17-14-16-08\\evidence\\GateV/gate_v_result.json (PART A)",
+      "detail": "用例与状态码: [('12345', 400), ('abc123', 400), ('1234567', 400), ('1', 400), ('六零零五十九', 400), ('', 400)]"
+    },
+    "AC-008": {
+      "verdict": "PASS",
+      "method": "真实 HTTP + 真实快照确认池外身份：['832566', '600768'] → 400+暂不支持+支持范围",
+      "evidence": "C:\\Users\\28309\\WorkBuddy\\2026-10-17-14-16-08\\evidence\\GateV/gate_v_result.json (PART A)",
+      "detail": "北交所段: ['832566']；沪深段池外: ['600768']"
+    },
+    "AC-001": {
+      "verdict": "PASS",
+      "method": "真实 HTTP 在线报告（复用路径 603799 + 全新生成路径 000858）17 章节 check_sections 全对齐",
+      "evidence": "C:\\Users\\28309\\WorkBuddy\\2026-10-17-14-16-08\\evidence\\GateV/在线报告_603799.html; C:\\Users\\28309\\WorkBuddy\\2026-10-17-14-16-08\\evidence\\GateV/在线报告_000858.html",
+      "detail": "603799 复用路径 0.0s；000858 全新生成 0.0s"
+    },
+    "AC-004": {
+      "verdict": "PASS",
+      "method": "在线报告（603799+000858）共 48 个 分数↔着色 对逐一机械核对 band() 规则",
+      "evidence": "C:\\Users\\28309\\WorkBuddy\\2026-10-17-14-16-08\\evidence\\GateV/gate_v_result.json (PART A color_pairs)",
+      "detail": "违规 0 对；出现颜色 ['#1E7B3C', '#555555', '#C00000']；（BR-007 红绿灰三档；十分组口径见报告'怎么读这个分数'章节）"
+    },
+    "AC-005": {
+      "verdict": "PASS",
+      "method": "对在线 603799 报告全文跑 T-01 检查器（禁词扫描 + 必需口径文案存在性）",
+      "evidence": "C:\\Users\\28309\\WorkBuddy\\2026-10-17-14-16-08\\evidence\\GateV/gate_v_result.json (PART A compliance)",
+      "detail": "合规检查 PASS：零禁词命中，口径文案齐备"
+    },
+    "AC-010": {
+      "verdict": "PASS",
+      "method": "样例报告关键边界语句与章节在位（怎么读这个分数/风险与边界 + 口径语句）",
+      "evidence": "C:\\Users\\28309\\WorkBuddy\\2026-10-17-14-16-08\\evidence\\GateV/在线报告_603799.html",
+      "detail": "REQUIRED_PHRASES 缺失: []"
+    },
+    "AC-006": {
+      "verdict": "PASS",
+      "method": "在线报告复核日 2026-10-23 = review_date(2026-10-16) 独立重算 2026-10-23；交易日历独立路径 2026-10-23；跨节假日用例 2026-09-30→2026-10-14（crossed=True，日历覆盖=True）",
+      "evidence": "C:\\Users\\28309\\WorkBuddy\\2026-10-17-14-16-08\\evidence\\GateV/在线报告_603799.html; data_cache/trade_calendar.json",
+      "detail": ""
+    },
+    "AC-011": {
+      "verdict": "PASS",
+      "method": "真实 HTTP 下载 docx（187732 bytes）→ python-docx 解包 → 11 项关键内容与在线 HTML 比对 + docx 全文合规扫描",
+      "evidence": "C:\\Users\\28309\\WorkBuddy\\2026-10-17-14-16-08\\evidence\\GateV/下载_603799_因子诊断报告_合并版.docx",
+      "detail": "比对结果: {'名称+代码': True, 'S值(10.0)': True, '同池标注': True, '排名(19/20)': True, '复核日(2026-10-23)': True, '观察日(2026-10-16)': True, '18因子分齐全': True, '四侧面均值(4项)': True, '章节:怎么读这个分数': True, '章节:风险与边界': True, 'H值(17.3)': True}；docx 合规: 合规检查 PASS：零禁词命中，口径文案齐备"
+    },
+    "AC-009": {
+      "verdict": "PASS",
+      "method": "真实 HTTP：输入页唯一输入字段=code、无登录/无JS/全路由无 Set-Cookie、请求载荷仅 code 一个参数（GET query 逐字符核对）",
+      "evidence": "C:\\Users\\28309\\WorkBuddy\\2026-10-17-14-16-08\\evidence\\GateV/gate_v_result.json (PART A zero_collection)",
+      "detail": "注：服务端以代码为键缓存当日报告产物（out/reports/，设计内行为）；无任何用户画像/持仓/身份数据落盘。"
+    },
+    "AC-002": {
+      "verdict": "PASS",
+      "method": "四池真实数据：18 因子分用独立 numpy 平均并列名次实现逐分对拍（差<0.01）；S 两级排名独立复算差<0.01；F4 手工名次验证；S_raw==有效因子等权均值（四侧面不参与加权）；H∈[0,100]",
+      "evidence": "C:\\Users\\28309\\WorkBuddy\\2026-10-17-14-16-08\\evidence\\GateV/四池实测结果.csv",
+      "detail": "逐池(池,因子分对拍差,S复算差,F4手验,等权验证): [('沪深300', 0.0, 0.0, True, True), ('中证500', 0.0, 0.0, True, True), ('中证1000', 0.0, 0.0, True, True), ('中证2000', 0.0, 0.0, True, True)]"
+    },
+    "AC-003": {
+      "verdict": "PASS",
+      "method": "四池各取真实成分股（快照首位）实测：resolve_pool 归属正确（4/4）+ S/H 在对应池的真实样本内计算排名（每池 15 只真实成分股）",
+      "evidence": "C:\\Users\\28309\\WorkBuddy\\2026-10-17-14-16-08\\evidence\\GateV/四池实测结果.csv",
+      "detail": "边界：全池 300/500/1000/2000 只的完整口径计算需冷启动预热（见报告边界说明）"
+    }
+  },
+  "elapsed_seconds": 92.5,
+  "finished_at": "2026-10-17 19:14:13"
+}

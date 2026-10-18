@@ -1,0 +1,10 @@
+[PASS] 中证2000名单取样 —— 样本: ['000011', '000014', '000017']
+[PASS] DoD-1 批量拉取 —— 成功 23/23；外网请求 92 次；失败: 无；来源 {'sina': 23}；备援事件 0 起
+[PASS] DoD-1 中证2000小盘股 —— 小盘样本 [('000011', 511), ('000014', 511), ('000017', 511)]
+[PASS] DoD-3 缓存命中零外网 —— 二次外网请求 0 次；缓存命中 23/23
+[PASS] DoD-4 复算与Spike-2一致 —— 603799: S_raw=33.61（Spike-2=33.60）, S=10.00（Spike-2=10.0），同池排名 19/20；矩阵 (20, 18)，有效样本 20–20
+Traceback (most recent call last):
+  File "C:\Users\28309\WorkBuddy\2026-10-17-14-16-08\tests\run_t02_dod.py", line 131, in <module>
+    with open(out_path, "w", encoding="utf-8") as f:
+         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\28309\\WorkBuddy\\2026-10-17-14-16-08\\tests\\..\\..\\evidence\\T-02_数据层_验收记录_20261017.json'
